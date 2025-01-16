@@ -7,4 +7,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: hanshazairi/42-norminette-action@v1.1.0
         with:
-          exclude-dir: ''
+          exclude-dir: './.github/'
