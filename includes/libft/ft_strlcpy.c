@@ -1,18 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/09 19:33:53 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/05/07 16:29:19 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+// Copies src into dst up to max size size - 1, ensures NULL termination.
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 {
-	return (0);
+	size_t	i;
+
+	if (!size)
+		return (ft_strlen(src));
+	i = 0;
+	while (src[i] && i < size - 1)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (ft_strlen(src));
 }

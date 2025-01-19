@@ -1,18 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/09 19:01:38 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/05/07 16:17:18 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+// Copies n bytes from src to dest. If the memories overlap, it copies from the
+// last byte to the first.
+
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	return (0);
+	char		*d;
+	const char	*s;
+
+	if (!dest && !src)
+		return (0);
+	d = (char *)dest;
+	s = (const char *)src;
+	if (d < s)
+	{
+		while (n--)
+			*d++ = *s++;
+		return (dest);
+	}
+	while (n--)
+		d[n] = s[n];
+	return (dest);
 }

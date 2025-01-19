@@ -1,18 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/15 09:51:58 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/05/07 16:24:50 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+// Creates a copy of string str1. Returns NULL in case of failure.
+
+char	*ft_strdup(const char *str1)
 {
-	return (0);
+	size_t	len;
+	char	*str2;
+	char	*ptr;
+
+	len = ft_strlen(str1);
+	str2 = malloc((len + 1) * sizeof(char));
+	if (!str2)
+		return (0);
+	ptr = str2;
+	while (*str1)
+		*str2++ = *str1++;
+	*str2 = 0;
+	return (ptr);
 }

@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_dlstclear.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/17 12:19:46 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/10/03 10:19:04 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+void	ft_dlstclear(t_dlist **lst, void (*del)(void *))
 {
-	return (0);
+	t_dlist	*ptr;
+	t_dlist	*next;
+
+	ptr = ft_dlstfirst(*lst);
+	while (ptr)
+	{
+		next = ptr->next;
+		ft_dlstdelone(ptr, del);
+		ptr = next;
+	}
+	*lst = NULL;
 }
