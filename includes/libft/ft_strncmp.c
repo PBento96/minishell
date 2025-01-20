@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/10 18:36:48 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/05/07 16:31:54 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+// Compares strings s1 and s2 up to n bytes, returning 0 if equal or a positive
+// or negative number depending if s2 is smaller or larger than s1.
+
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	return (0);
+	while ((*s1 == *s2) && n-- && *s1 && *s2)
+	{
+		s1++;
+		s2++;
+	}
+	if (!n)
+		return (0);
+	return ((unsigned char)*s1 - (unsigned char)*s2);
 }

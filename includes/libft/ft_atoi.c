@@ -1,18 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/15 08:47:32 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/05/07 15:50:55 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+// Converts str to an integer, returns 0 if invalid.
 
-int	main(void)
+int	ft_atoi(const char *str)
 {
-	return (0);
+	int	ret;
+	int	is_neg;
+
+	ret = 0;
+	is_neg = 0;
+	while (*str == 32 || (*str > 8 && *str < 14))
+		str++;
+	if (*str == 45 || *str == 43)
+	{
+		if (*str == 45)
+			is_neg = 1;
+		str++;
+	}
+	while (*str)
+	{
+		if (*str < 48 || *str > 57)
+			break ;
+		ret = ret * 10 + *str - 48;
+		str++;
+	}
+	if (is_neg)
+		ret = -ret;
+	return (ret);
 }

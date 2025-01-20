@@ -1,18 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:12 by pda-silv         ###   ########.fr       */
+/*   Created: 2024/04/17 12:15:09 by pda-silv          #+#    #+#             */
+/*   Updated: 2024/05/09 17:03:28 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+// Returns the size of linked list lst.
+
+int	ft_lstsize(t_list *lst)
 {
-	return (0);
+	int		c;
+	t_list	*ptr;
+
+	if (!lst)
+		return (0);
+	c = 1;
+	ptr = lst;
+	while (ptr->next)
+	{
+		ptr = ptr->next;
+		c++;
+	}
+	return (c);
 }
