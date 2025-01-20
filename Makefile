@@ -11,7 +11,7 @@ OBJ			=	${SRC:.c=.o}
 
 ##	BASIC RULES
 ${NAME}: init ${OBJ}
-	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME}
+	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME} -lreadline
 
 all: ${NAME}
 
