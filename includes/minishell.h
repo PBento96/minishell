@@ -13,6 +13,12 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+
+# include "libft/libft.h"
+
 # define OP_SQUOTE			'\''
 # define OP_DQUOTE			'\"'
 # define OP_REDIRECT_IN		'<'
@@ -32,5 +38,9 @@
 # define OP_OR				"||"
 # define OP_AND				"&&"
 # define OP_WILD			"*"
+# define MAX_INPUT_SIZE 1024
+# define EXIT_SUCCESS 0
+# define EXIT_FAILURE 1
+
 
 #endif

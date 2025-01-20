@@ -1,6 +1,8 @@
 ##	PROJECT
 NAME	=	minishell
 
+LIBFT = ./includes/libft/libft.a
+
 ##	MAKEFILE VARS
 include	./includes/make/vars.mk
 
@@ -11,7 +13,7 @@ OBJ			=	${SRC:.c=.o}
 
 ##	BASIC RULES
 ${NAME}: init ${OBJ}
-	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME}
+	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} ${LIBFT} -o ${BIN_DIR}/${NAME} -lreadline
 
 all: ${NAME}
 
