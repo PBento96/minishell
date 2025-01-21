@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/21 09:47:11 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/21 10:39:09 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,33 @@ void	ft_print_prompt(void)
 	ft_printf("Minishell:%s> ", cwd);
 }
 
+static void	ft_sighandler(int signum, siginfo_t *info, void *context)
+{
+	(void)info;
+	(void)context;
+	if (signum == SIGINT || signum == SIGQUIT)
+		exit(EXIT_FAILURE);
+}
+
 /* Should start signal handling before running loop */
 
 int	main(int argc, char **argv, char **env)
 {
-	int		running;
-	char	*input;
+	int					running;
+	char				*input;
+	struct sigaction	sa;
 
 	(void)argc;
 	(void)argv;
 	running = 1;
 	ft_header();
+	sigemptyset(&sa.sa_mask);
+	sigaddset(&sa.sa_mask, SIGINT);
+	sigaddset(&sa.sa_mask, SIGQUIT);
+	sa.sa_sigaction = &ft_sighandler;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
 	while (running)
 	{
 		ft_print_prompt();
