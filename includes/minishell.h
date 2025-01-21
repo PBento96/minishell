@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/17 10:05:23 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/21 09:39:24 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,7 @@
 # define MAX_INPUT_SIZE 1024
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
+
+void	ft_header(void);
 
 #endif
