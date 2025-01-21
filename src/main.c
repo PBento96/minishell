@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/20 16:44:05 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/01/21 10:39:09 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 /* Adds input to command history               */
 /* It now needs to parse and exec the input    */
 
-void	process_input(char *input, char **env)
+void	ft_process_input(char *input, char **env)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ void	process_input(char *input, char **env)
 	free(input);
 }
 
-char	*get_user_input(void)
+char	*ft_get_user_input(void)
 {
 	char	*input;
 
@@ -50,7 +50,7 @@ char	*get_user_input(void)
 
 /* Shows prompt with working directory */
 
-void	print_prompt(void)
+void	ft_print_prompt(void)
 {
 	char	cwd[MAX_INPUT_SIZE];
 
@@ -62,21 +62,38 @@ void	print_prompt(void)
 	ft_printf("Minishell:%s> ", cwd);
 }
 
+static void	ft_sighandler(int signum, siginfo_t *info, void *context)
+{
+	(void)info;
+	(void)context;
+	if (signum == SIGINT || signum == SIGQUIT)
+		exit(EXIT_FAILURE);
+}
+
 /* Should start signal handling before running loop */
 
 int	main(int argc, char **argv, char **env)
 {
-	int		running;
-	char	*input;
+	int					running;
+	char				*input;
+	struct sigaction	sa;
 
 	(void)argc;
 	(void)argv;
 	running = 1;
+	ft_header();
+	sigemptyset(&sa.sa_mask);
+	sigaddset(&sa.sa_mask, SIGINT);
+	sigaddset(&sa.sa_mask, SIGQUIT);
+	sa.sa_sigaction = &ft_sighandler;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
 	while (running)
 	{
-		print_prompt();
-		input = get_user_input();
-		process_input(input, env);
+		ft_print_prompt();
+		input = ft_get_user_input();
+		ft_process_input(input, env);
 	}
 	ft_printf("Exiting Minishell\n");
 	return (EXIT_SUCCESS);

@@ -5,13 +5,13 @@ NAME	=	minishell
 include	./includes/make/vars.mk
 
 ##	C FILES
-SRC_FILES	=	main.c
+SRC_FILES	=	main.c startup.c
 SRC			=	${addprefix ./src/, ${SRC_FILES}}
 OBJ			=	${SRC:.c=.o}
 
 ##	BASIC RULES
 ${NAME}: init ${OBJ}
-	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME} -lreadline
+	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME}
 
 all: ${NAME}
 

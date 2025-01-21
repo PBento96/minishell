@@ -14,7 +14,7 @@ LOGS_DIR		=	./logs
 NORM_DIRS		=	${LIBFT_DIR} ${INCLUDES_DIR}/minishell.h ./src
 
 ##	LIBRARIES
-INCLUDES = -I ${INCLUDES_DIR}
+INCLUDES = -I ${INCLUDES_DIR} -lreadline
 LIBRARIES = ${LIBFT_DIR}/libft.a
 
 ##	GIT
