@@ -35,6 +35,7 @@ void	ft_process_input(char *input, char **env)
 		return ;
 	}
 	add_history(input);
+	ft_parse_and_exec_cmd(input, env);
 	free(input);
 }
 

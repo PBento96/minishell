@@ -39,9 +39,26 @@
 # define OP_AND				"&&"
 # define OP_WILD			"*"
 # define MAX_INPUT_SIZE 1024
+# define MAX_PIPE_COUNT 10
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 
+typedef enum {
+	BUILTIN,
+	EXTERNAL,
+	OTHER
+} CommandType;
+
+typedef struct {
+	CommandType type;
+	char *command;
+	char **args;
+	int argc;
+	int input_size;
+	char **env;
+} Parser;
+
 void	ft_header(void);
+void	ft_parse_and_exec_cmd(char *input, char **env);
 
 #endif
