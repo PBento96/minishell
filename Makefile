@@ -15,10 +15,10 @@ ${NAME}: init ${OBJ}
 
 all: ${NAME}
 
-clean:
+clean: libft_clean
 	rm -f ${OBJ} ${OBJ}
 
-fclean: clean
+fclean: clean libft_fclean
 	rm -f ${BIN_DIR}${NAME} ${BIN_DIR}${NAME}_bonus
 
 re: fclean all
