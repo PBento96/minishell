@@ -1,16 +1,15 @@
 <!--- Provide a general summary of your changes in the Title above -->
-# Pull Request Template
-
-## Title
+# Title
 <!--- Provide a concise title for your pull request -->
 
 ## Description
 <!--- Describe your changes in detail -->
 
-## Related Issue [Issue #](issue_link)
+## Related Issue
 <!--- This project only accepts pull requests related to open issues -->
 <!--- If suggesting a new feature or change, please discuss it in an issue first -->
 <!--- If fixing a bug, there should be an issue describing it with steps to reproduce -->
+<!--- Include [Issue #](issue_link) -->
 
 ## Motivation and Context
 <!--- Why is this change required? What problem does it solve? -->
