@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/21 10:32:29 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/27 12:26:01 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +43,22 @@
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 
-typedef enum {
+typedef enum e_command_type
+{
 	BUILTIN,
 	EXTERNAL,
 	OTHER
-} CommandType;
+}	t_command_type;
 
-typedef struct {
-	CommandType type;
-	char *command;
-	char **args;
-	int argc;
-	int input_size;
-	char **env;
-} Parser;
+typedef struct s_data
+{
+	t_command_type	type;
+	char			*command;
+	char			**args;
+	int				argc;
+	int				input_size;
+	char			**env;
+}	t_data;
 
 void	ft_header(void);
 void	ft_parse_and_exec_cmd(char *input, char **env);
