@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/01/28 11:06:47 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:59:24 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static t_token	ft_parse_token(char **ptr)
 	{
 		token.type = CMD;
 		token.value = ft_parse_word(ptr);
-		if (is_builtin(token.value))
+		if (ft_is_builtin(token.value))
 			token.type = BUILTIN;
 	}
 	return (token);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/01/28 11:05:50 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:58:38 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ char	*ft_parse_word(char **ptr)
 	char	*word;
 
 	start = *ptr;
-	while (**ptr && !ft_isspace(**ptr) && **ptr != '|' && \
-	**ptr != '>' && **ptr != '<')
+	while (**ptr && !ft_isspace(**ptr) && **ptr != '|'
+		&& **ptr != '>' && **ptr != '<')
 		(*ptr)++;
 	word = ft_substr(start, 0, *ptr - start);
 	return (word);
 }
 
-bool	is_builtin(const char *command)
+bool	ft_is_builtin(const char *command)
 {
 	int	is;
 
@@ -66,8 +66,8 @@ t_command	*ft_parse_tokens(t_token *tokens, int token_count, int *cmd_count)
 			commands[cmd_index].token_count = 0;
 		}
 		else
-			commands[cmd_index].tokens[commands[cmd_index].token_count++] \
-			= tokens[i];
+			commands[cmd_index].tokens[commands[cmd_index]
+				.token_count++] = tokens[i];
 		i++;
 	}
 	*cmd_count = cmd_index + 1;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/28 11:13:38 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:54:06 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,31 +16,29 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <unistd.h>
 # include <sys/wait.h>
-# include <fcntl.h>
 
 # include "libft/libft.h"
 
-# define OP_SQUOTE			'\''
-# define OP_DQUOTE			'\"'
-# define OP_REDIRECT_IN		'<'
-# define OP_REDIRECT_OUT	'>'
-# define OP_REDIRECT_DELIM	"<<"
-# define OP_REDIRECT_APPEND	">>"
-# define OP_PIPE			'|'
-# define OP_VAR				'$'
-# define OP_EXIT_STATUS		"$?"
-# define OP_ECHO			"echo"
-# define OP_NO_NL			"-n"
-# define OP_PWD				"pwd"
-# define OP_EXP				"export"
-# define OP_UNS				"unset"
-# define OP_ENV				"env"
-# define OP_EXT				"exit"
-# define OP_OR				"||"
-# define OP_AND				"&&"
-# define OP_WILD			"*"
+# define OP_SQUOTE '\''
+# define OP_DQUOTE '\"'
+# define OP_REDIRECT_IN '<'
+# define OP_REDIRECT_OUT '>'
+# define OP_REDIRECT_DELIM "<<"
+# define OP_REDIRECT_APPEND ">>"
+# define OP_PIPE '|'
+# define OP_VAR '$'
+# define OP_EXIT_STATUS "$?"
+# define OP_ECHO "echo"
+# define OP_NO_NL "-n"
+# define OP_PWD "pwd"
+# define OP_EXP "export"
+# define OP_UNS "unset"
+# define OP_ENV "env"
+# define OP_EXT "exit"
+# define OP_OR "||"
+# define OP_AND "&&"
+# define OP_WILD "*"
 # define MAX_INPUT_SIZE 1024
 # define MAX_PIPE_COUNT 10
 # define MAX_TOKENS 100
@@ -76,6 +74,6 @@ void		ft_print_commands(t_command *commands, int command_count);
 t_token		*ft_tokenize_input(char *input, int *token_count);
 void		ft_free_commands(t_command *commands, int command_count);
 char		*ft_parse_word(char **ptr);
-bool		is_builtin(const char *command);
+bool		ft_is_builtin(const char *command);
 
 #endif
