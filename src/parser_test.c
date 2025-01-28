@@ -1,24 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   startup.c                                          :+:      :+:    :+:   */
+/*   parser_test.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 09:23:36 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/27 21:43:01 by joseferr         ###   ########.fr       */
+/*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
+/*   Updated: 2025/01/27 23:02:43 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* Starts with the Beauty of ASCII Art */
-void	ft_header(void)
+void	ft_print_commands(t_command *commands, int command_count)
 {
-	ft_printf(C_BRT_GREEN "\n");
-	ft_printf("  _ _ ___         _      _    _        _ _ \n");
-	ft_printf(" | | |_  )  _ __ (_)_ _ (_)__| |_  ___| | |\n");
-	ft_printf(" |_  _/ /  | '  \\| | ' \\| (_-< ' \\/ -_) | |\n");
-	ft_printf("   |_/___| |_|_|_|_|_||_|_/__/_||_\\___|_|_|\n");
-	ft_printf("\n\tProject by joseferr & pda-silv\n\n" RESET_COLOR);
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	ft_printf("Parsed Commands:\n");
+	while (i < command_count)
+	{
+		ft_printf("Command %d:\n", i + 1);
+		while (j < commands[i].token_count)
+		{
+			ft_printf("  Token %d: Type = %d, Value = '%s'\n",
+				j + 1,
+				commands[i].tokens[j].type,
+				commands[i].tokens[j].value);
+			j++;
+		}
+		i++;
+	}
 }
