@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   startup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 09:23:36 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/21 09:43:14 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/27 21:43:01 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Starts with the Beauty of ASCII Art */
 void	ft_header(void)
 {
 	ft_printf(C_BRT_GREEN "\n");
