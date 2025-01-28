@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/28 11:06:28 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:13:38 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,19 @@ typedef enum e_token_type
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND
-} t_token_type;
+}	t_token_type;
 
 typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
-} t_token;
+}	t_token;
 
 typedef struct s_command
 {
 	t_token	*tokens;
 	int		token_count;
-} t_command;
+}	t_command;
 
 void		ft_header(void);
 t_command	*ft_parse_input(char *input, int *command_count);
