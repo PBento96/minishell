@@ -10,15 +10,15 @@ SRC			=	${addprefix ./src/, ${SRC_FILES}}
 OBJ			=	${SRC:.c=.o}
 
 ##	BASIC RULES
-${NAME}: init ${OBJ}
+${NAME}: init libft ${OBJ}
 	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME}
 
 all: ${NAME}
 
-clean:
+clean: libft_clean
 	rm -f ${OBJ} ${OBJ}
 
-fclean: clean
+fclean: clean libft_fclean
 	rm -f ${BIN_DIR}${NAME} ${BIN_DIR}${NAME}_bonus
 
 re: fclean all
