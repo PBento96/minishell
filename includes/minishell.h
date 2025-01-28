@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/27 12:26:01 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:06:28 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <unistd.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 
 # include "libft/libft.h"
 
@@ -40,27 +43,39 @@
 # define OP_WILD			"*"
 # define MAX_INPUT_SIZE 1024
 # define MAX_PIPE_COUNT 10
+# define MAX_TOKENS 100
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 
-typedef enum e_command_type
+typedef enum e_token_type
 {
+	CMD,
 	BUILTIN,
-	EXTERNAL,
-	OTHER
-}	t_command_type;
+	ARG,
+	PIPE,
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND
+} t_token_type;
 
-typedef struct s_data
+typedef struct s_token
 {
-	t_command_type	type;
-	char			*command;
-	char			**args;
-	int				argc;
-	int				input_size;
-	char			**env;
-}	t_data;
+	t_token_type	type;
+	char			*value;
+} t_token;
 
-void	ft_header(void);
-void	ft_parse_and_exec_cmd(char *input, char **env);
+typedef struct s_command
+{
+	t_token	*tokens;
+	int		token_count;
+} t_command;
+
+void		ft_header(void);
+t_command	*ft_parse_input(char *input, int *command_count);
+void		ft_print_commands(t_command *commands, int command_count);
+t_token		*ft_tokenize_input(char *input, int *token_count);
+void		ft_free_commands(t_command *commands, int command_count);
+char		*ft_parse_word(char **ptr);
+bool		is_builtin(const char *command);
 
 #endif

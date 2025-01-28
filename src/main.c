@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/21 10:39:09 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/28 09:47:54 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,12 @@
 
 void	ft_process_input(char *input, char **env)
 {
-	int	i;
+	int			command_count;
+	t_command	*commands;
+	int			i;
 
-	i = 0;
 	(void)env;
+	i = 0;
 	while (input[i] != '\n' && input[i] != '\0')
 		i++;
 	if (input[i] == '\n')
@@ -35,7 +37,9 @@ void	ft_process_input(char *input, char **env)
 		return ;
 	}
 	add_history(input);
-	ft_parse_and_exec_cmd(input, env);
+	commands = ft_parse_input(input, &command_count);
+	ft_print_commands(commands, command_count);
+	ft_free_commands(commands, command_count);
 	free(input);
 }
 
