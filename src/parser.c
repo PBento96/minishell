@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/01/29 18:38:11 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/29 18:40:27 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	ft_free_commands(t_command *commands, int command_count)
 		ft_free((void **)&commands[i].tokens);
 		i++;
 	}
-	free((void **)&commands);
+	ft_free((void **)&commands);
 }
 
 /* The Journey of Tokens starts here */
