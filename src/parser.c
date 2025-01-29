@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/01/28 11:58:38 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/01/28 12:51:03 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ char	*ft_parse_word(char **ptr)
 	char	*word;
 
 	start = *ptr;
-	while (**ptr && !ft_isspace(**ptr) && **ptr != '|'
-		&& **ptr != '>' && **ptr != '<')
+	while (**ptr && !ft_isspace(**ptr) && **ptr != OP_PIPE
+		&& **ptr != OP_REDIRECT_OUT && **ptr != OP_REDIRECT_IN)
 		(*ptr)++;
 	word = ft_substr(start, 0, *ptr - start);
 	return (word);
