@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/06 20:08:57 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/06 20:52:10 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 
 void	ft_process_input(t_data *data)
 {
-	int			command_count;
-	t_command	*commands;
 	int			i;
 
 	i = 0;
@@ -35,9 +33,8 @@ void	ft_process_input(t_data *data)
 		return ;
 	}
 	add_history(data->input);
-	commands = ft_parse_input(data->input, &command_count);
-	ft_print_commands(commands, command_count);
-	ft_free_commands(commands, command_count);
+	ft_tokenize_input(data);
+	ft_print_commands(data->commands, data->cmd_count);
 	ft_free((void **) &(data->input));
 }
 
