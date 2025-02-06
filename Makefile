@@ -5,7 +5,7 @@ NAME	=	minishell
 include	./includes/make/vars.mk
 
 ##	C FILES
-SRC_FILES	=	main.c startup.c parser.c parser_test.c tokenization.c
+SRC_FILES	=	main.c startup.c parser.c parser_test.c tokenization.c shutdown.c
 SRC			=	${addprefix ./src/, ${SRC_FILES}}
 OBJ			=	${SRC:.c=.o}
 

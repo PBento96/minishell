@@ -1,36 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_test.c                                      :+:      :+:    :+:   */
+/*   shutdown.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/06 19:25:00 by pda-silv         ###   ########.fr       */
+/*   Created: 2025/02/03 14:37:51 by pda-silv          #+#    #+#             */
+/*   Updated: 2025/02/06 20:08:34 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_print_commands(t_command *commands, int command_count)
+void	ft_shutdown(t_data **data, int retval)
 {
-	int	i;
-	int	j;
-
-	i = 0;
-	ft_printf("Parsed Commands:\n");
-	while (i < command_count)
-	{
-		j = 0;
-		ft_printf("Command %d:\n", i + 1);
-		while (j < commands[i].token_count)
-		{
-			ft_printf("  Token %d: Type = %d, Value = '%s'\n",
-				j + 1,
-				commands[i].tokens[j].type,
-				commands[i].tokens[j].value);
-			j++;
-		}
-		i++;
-	}
+	ft_printf("Exiting Minishell...\n");
+	ft_free((void **) (*data)->input);
+	ft_free((void **) data);
+	exit(retval);
 }
