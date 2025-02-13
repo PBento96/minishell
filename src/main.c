@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/06 20:52:10 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/13 22:58:51 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,17 @@ void	ft_process_input(t_data *data)
 	}
 	add_history(data->input);
 	ft_tokenize_input(data);
-	ft_print_commands(data->commands, data->cmd_count);
+	ft_execute(data);
 	ft_free((void **) &(data->input));
 }
 
 static void	ft_iohandler(t_data *data)
 {
-    if (!getcwd(data->cwd, sizeof(data->cwd)))
-    {
-        perror("getcwd");
-        ft_shutdown(&data, ERR_IO);
-    }
+	if (!getcwd(data->cwd, sizeof(data->cwd)))
+	{
+		perror("getcwd");
+		ft_shutdown(&data, ERR_IO);
+	}
 	ft_printf("%s > ", data->cwd);
 	data->input = readline("");
 	if (!data->input)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/06 20:52:21 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/13 22:56:22 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,14 @@ typedef struct s_command
 typedef struct s_data
 {
 	t_command	commands[MAX_PIPE_COUNT];
-    char        cwd[MAX_CWD_SIZE];
+	char		cwd[MAX_CWD_SIZE];
 	char		**env;
 	char		*input;
 	int8_t		cmd_count;
 	int8_t		retval;
 }	t_data;
 
-void	ft_print_commands(t_command *commands, int command_count);
+// Parsing
 void	ft_tokenize_input(t_data *data);
 char	*ft_parse_word(char **ptr);
 bool	ft_is_builtin(const char *command);
@@ -85,5 +85,9 @@ bool	ft_is_builtin(const char *command);
 // Memory
 int		ft_initilaize(t_data **data, char **env);
 void	ft_shutdown(t_data **data, int retval);
+
+// Execution
+
+void	ft_execute(t_data *data);
 
 #endif
