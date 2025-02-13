@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/06 21:01:29 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/13 22:22:20 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,15 +79,22 @@ void	ft_tokenize_input(t_data *data)
 	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
 	ptr = data->input;
 	count = 0;
+	data->cmd_count = 0;
 	while (*ptr)
 	{
 		token = ft_parse_token(&ptr);
-		if (!token.value && token.type != PIPE)
+		printf("Command: %d, Token type: %d, Token value: %s\n",data->cmd_count, token.type, token.value); // Debug print
+		if (token.value && token.type != PIPE)
+		{
 			data->commands[data->cmd_count].tokens[count++] = token;
+			data->commands[data->cmd_count].token_count = count;
+		}
 		if (token.type == PIPE)
+		{
 			data->cmd_count++;
+			count = 0;
+		}
 		ptr = ft_skip_whitespace(ptr);
+		printf("Command Count: %d Tokens: %d\n", data->cmd_count, data->commands[data->cmd_count].token_count);
 	}
-	data->commands[data->cmd_count].token_count = count;
-	printf("%d %d", data->cmd_count, data->commands[data->cmd_count].token_count);
 }
