@@ -52,7 +52,7 @@ char	*ft_getenv(const char *name, char **env)
 	return (NULL);
 }
 
-void	ft_getpath(t_data *data)
+void	ft_getpath(t_data *data, int i)
 {
 	char	*path;
 	char	**dirs;
@@ -77,7 +77,7 @@ void	ft_getpath(t_data *data)
 		data->cmd_path = NULL;
 		return ;
 	}
-	data->cmd_path = ft_findcmd(dirs, data->commands[0].tokens[0].value);
+	data->cmd_path = ft_findcmd(dirs, data->commands[i].tokens[0].value);
 	ft_free((void **)&dirs);
 }
 
@@ -108,7 +108,7 @@ void	ft_execute_command(t_data *data, char **cmd_args)
 	exit(EXIT_FAILURE);
 }
 
-void	ft_fork_and_execute(t_data	*data)
+void	ft_execute(t_data *data)
 {
 	pid_t	pid;
 	int		status;
@@ -119,8 +119,10 @@ void	ft_fork_and_execute(t_data	*data)
 	while(command <= data->cmd_count)
 	{
 		printf("Command: %d\n", command); // Debug print
+		printf("Token Command: %s\n", data->commands[command].tokens[0].value); // Debug print
 
 		cmd_args = ft_tokens_to_args(data->commands[command].tokens, data->commands[command].token_count);
+		ft_getpath(data, command);
 		pid = fork();
 		if (pid == -1)
 		{
@@ -130,10 +132,7 @@ void	ft_fork_and_execute(t_data	*data)
 			return;
 		}
 		else if (pid == 0)
-		{
-			ft_getpath(data);
 			ft_execute_command(data, cmd_args);
-		}
 		else
 		{
 			waitpid(pid, &status, 0);
@@ -142,9 +141,4 @@ void	ft_fork_and_execute(t_data	*data)
 		}
 		command++;
 	}
-}
-
-void	ft_execute(t_data *data)
-{
-	ft_fork_and_execute(data);
 }
