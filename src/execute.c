@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/13 23:13:32 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/17 17:37:02 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,26 +52,33 @@ char	*ft_getenv(const char *name, char **env)
 	return (NULL);
 }
 
-char	*ft_getpath(t_data *data)
+void	ft_getpath(t_data *data)
 {
-	char	*cmd_path;
 	char	*path;
 	char	**dirs;
 	char	*path_copy;
 
 	path = ft_getenv("PATH", data->env);
 	if (!path)
-		return (NULL);
+	{
+		data->cmd_path = NULL;
+		return ;
+	}
 	path_copy = ft_strdup(path);
 	if (!path_copy)
-		return (NULL);
+	{
+		data->cmd_path = NULL;
+		return ;
+	}
 	dirs = ft_split(path_copy, ':');
 	ft_free((void **)&path_copy);
 	if (!dirs)
-		return (NULL);
-	cmd_path = ft_findcmd(dirs, data->commands[0].tokens[0].value);
+	{
+		data->cmd_path = NULL;
+		return ;
+	}
+	data->cmd_path = ft_findcmd(dirs, data->commands[0].tokens[0].value);
 	ft_free((void **)&dirs);
-	return (cmd_path);
 }
 
 char **ft_tokens_to_args(t_token *tokens, int token_count)
@@ -92,59 +99,52 @@ char **ft_tokens_to_args(t_token *tokens, int token_count)
 	return (args);
 }
 
-void	ft_execute_command(char *cmd_path, char **cmd_args, char **env)
+void	ft_execute_command(t_data *data, char **cmd_args)
 {
-	execve(cmd_path, cmd_args, env);
+	execve(data->cmd_path, cmd_args, data->env);
 	perror("execve");
-	ft_free((void **)&cmd_path);
+	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
 	exit(EXIT_FAILURE);
 }
 
-void	ft_fork_and_execute(char *cmd_path, char **cmd_args, char **env)
+void	ft_fork_and_execute(t_data	*data)
 {
 	pid_t	pid;
 	int		status;
+	int		command;
+	char	**cmd_args;
 
-	pid = fork();
-	if (pid == -1)
+	command = 0;
+	while(command <= data->cmd_count)
 	{
-		perror("fork");
-		ft_free((void **)&cmd_path);
-		ft_free_array((void **)cmd_args);
-		return;
-	}
-	else if (pid == 0)
-	{
-		// Child process
-		ft_execute_command(cmd_path, cmd_args, env);
-	}
-	else
-	{
-		// Parent process
-		waitpid(pid, &status, 0);
-		ft_free((void **)&cmd_path);
-		ft_free_array((void **)cmd_args);
+		printf("Command: %d\n", command); // Debug print
+
+		cmd_args = ft_tokens_to_args(data->commands[command].tokens, data->commands[command].token_count);
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			ft_free((void **)&data->cmd_path);
+			ft_free_array((void **)cmd_args);
+			return;
+		}
+		else if (pid == 0)
+		{
+			ft_getpath(data);
+			ft_execute_command(data, cmd_args);
+		}
+		else
+		{
+			waitpid(pid, &status, 0);
+			ft_free((void **)&data->cmd_path);
+			ft_free_array((void **)cmd_args);
+		}
+		command++;
 	}
 }
 
 void	ft_execute(t_data *data)
 {
-	char	*cmd_path;
-	char	**cmd_args;
-
-	cmd_path = ft_getpath(data);
-	if (!cmd_path)
-	{
-		ft_printf("Command not found: %s\n", data->commands[0].tokens[0].value);
-		return;
-	}
-	cmd_args = ft_tokens_to_args(data->commands[0].tokens, data->commands[0].token_count);
-	if (!cmd_args)
-	{
-		perror("malloc");
-		ft_free((void **)&cmd_path);
-		return;
-	}
-	ft_fork_and_execute(cmd_path, cmd_args, data->env);
+	ft_fork_and_execute(data);
 }

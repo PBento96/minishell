@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/13 22:56:22 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/14 13:02:49 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct s_data
 	char		cwd[MAX_CWD_SIZE];
 	char		**env;
 	char		*input;
+	char		*cmd_path;
 	int8_t		cmd_count;
 	int8_t		retval;
 }	t_data;
