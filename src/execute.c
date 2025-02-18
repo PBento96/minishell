@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/18 14:10:06 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/18 17:50:28 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,19 @@ void	ft_handle_parent_process(pid_t pid, int pipefd[2], int command)
 		close(pipefd[0]);
 }
 
+void	ft_pipe_error(t_data *data, char	**cmd_args)
+{
+	perror("fork");
+	ft_free_cmd(data, cmd_args);
+	return;
+}
+
+void	ft_free_cmd(t_data *data, char	**cmd_args)
+{
+	ft_free((void **)&data->cmd_path);
+	ft_free_array((void **)cmd_args);
+}
+
 void	ft_execute(t_data *data)
 {
 	int		pipefd[2];
@@ -98,12 +111,7 @@ void	ft_execute(t_data *data)
 		ft_setup_pipes(pipefd);
 		pid = fork();
 		if (pid == -1)
-		{
-			perror("fork");
-			ft_free((void **)&data->cmd_path);
-			ft_free_array((void **)cmd_args);
-			return;
-		}
+			ft_pipe_error(data, cmd_args);
 		else if (pid == 0)
 		{
 			ft_handle_pipes(data, pipefd, command);
@@ -112,8 +120,7 @@ void	ft_execute(t_data *data)
 		else
 		{
 			ft_handle_parent_process(pid, pipefd, command);
-			ft_free((void **)&data->cmd_path);
-			ft_free_array((void **)cmd_args);
+			ft_free_cmd(data, cmd_args);
 		}
 		command++;
 	}
