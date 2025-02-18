@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/14 13:02:49 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/18 10:26:14 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,9 @@ int		ft_initilaize(t_data **data, char **env);
 void	ft_shutdown(t_data **data, int retval);
 
 // Execution
-
 void	ft_execute(t_data *data);
+
+// Pathing
+void	ft_getpath(t_data *data, int i);
 
 #endif
