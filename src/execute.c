@@ -6,80 +6,11 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/17 17:37:02 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/18 14:10:06 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	*ft_findcmd(char **dirs, char *cmd)
-{
-	char	*cmd_path;
-	char	*tmp;
-	int		i;
-
-	i = 0;
-	while (dirs[i])
-	{
-		tmp = ft_strjoin(dirs[i], "/");
-		if (!tmp)
-			return (NULL);
-		cmd_path = ft_strjoin(tmp, cmd);
-		ft_free((void **)&tmp);
-		if (!cmd_path)
-			return (NULL);
-		if (access(cmd_path, F_OK) == 0)
-			return (cmd_path);
-		ft_free((void **)&cmd_path);
-		i++;
-	}
-	return (NULL);
-}
-
-char	*ft_getenv(const char *name, char **env)
-{
-	int		i;
-	size_t	len;
-
-	len = ft_strlen(name);
-	i = 0;
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], name, len) == 0 && env[i][len] == '=')
-			return (env[i] + len + 1);
-		i++;
-	}
-	return (NULL);
-}
-
-void	ft_getpath(t_data *data, int i)
-{
-	char	*path;
-	char	**dirs;
-	char	*path_copy;
-
-	path = ft_getenv("PATH", data->env);
-	if (!path)
-	{
-		data->cmd_path = NULL;
-		return ;
-	}
-	path_copy = ft_strdup(path);
-	if (!path_copy)
-	{
-		data->cmd_path = NULL;
-		return ;
-	}
-	dirs = ft_split(path_copy, ':');
-	ft_free((void **)&path_copy);
-	if (!dirs)
-	{
-		data->cmd_path = NULL;
-		return ;
-	}
-	data->cmd_path = ft_findcmd(dirs, data->commands[i].tokens[0].value);
-	ft_free((void **)&dirs);
-}
 
 char **ft_tokens_to_args(t_token *tokens, int token_count)
 {
@@ -101,6 +32,15 @@ char **ft_tokens_to_args(t_token *tokens, int token_count)
 
 void	ft_execute_command(t_data *data, char **cmd_args)
 {
+	int i;
+
+	i = 0;
+	printf("Executing command: %s\n", data->cmd_path);
+	while ( cmd_args[i] != NULL)
+	{
+		printf("arg[%d]: %s\n", i, cmd_args[i]);
+		i++;
+	}
 	execve(data->cmd_path, cmd_args, data->env);
 	perror("execve");
 	ft_free((void **)&data->cmd_path);
@@ -108,21 +48,54 @@ void	ft_execute_command(t_data *data, char **cmd_args)
 	exit(EXIT_FAILURE);
 }
 
+void	ft_setup_pipes(int pipefd[2])
+{
+	if (pipe(pipefd) == -1)
+	{
+		perror("pipe");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
+{
+	if (command != 0)
+	{
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+	}
+	if (command != data->cmd_count)
+	{
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[1]);
+	}
+	close(pipefd[0]);
+	close(pipefd[1]);
+}
+
+void	ft_handle_parent_process(pid_t pid, int pipefd[2], int command)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	close(pipefd[1]);
+	if (command != 0)
+		close(pipefd[0]);
+}
+
 void	ft_execute(t_data *data)
 {
+	int		pipefd[2];
 	pid_t	pid;
-	int		status;
 	int		command;
 	char	**cmd_args;
 
 	command = 0;
-	while(command <= data->cmd_count)
+	while (command <= data->cmd_count)
 	{
-		printf("Command: %d\n", command); // Debug print
-		printf("Token Command: %s\n", data->commands[command].tokens[0].value); // Debug print
-
 		cmd_args = ft_tokens_to_args(data->commands[command].tokens, data->commands[command].token_count);
 		ft_getpath(data, command);
+		ft_setup_pipes(pipefd);
 		pid = fork();
 		if (pid == -1)
 		{
@@ -132,10 +105,13 @@ void	ft_execute(t_data *data)
 			return;
 		}
 		else if (pid == 0)
+		{
+			ft_handle_pipes(data, pipefd, command);
 			ft_execute_command(data, cmd_args);
+		}
 		else
 		{
-			waitpid(pid, &status, 0);
+			ft_handle_parent_process(pid, pipefd, command);
 			ft_free((void **)&data->cmd_path);
 			ft_free_array((void **)cmd_args);
 		}
