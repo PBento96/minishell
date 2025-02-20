@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/18 10:26:14 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/20 11:24:18 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,10 @@ void	ft_execute(t_data *data);
 
 // Pathing
 void	ft_getpath(t_data *data, int i);
+
+// Error handling
+void	ft_setup_pipes(int pipefd[2]);
+void	ft_pipe_error(t_data *data, char	**cmd_args);
+void	ft_free_cmd(t_data *data, char	**cmd_args);
 
 #endif

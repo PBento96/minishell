@@ -6,13 +6,13 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/18 17:50:28 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/20 11:25:59 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char **ft_tokens_to_args(t_token *tokens, int token_count)
+char	**ft_tokens_to_args(t_token *tokens, int token_count)
 {
 	char	**args;
 	int		i;
@@ -32,11 +32,11 @@ char **ft_tokens_to_args(t_token *tokens, int token_count)
 
 void	ft_execute_command(t_data *data, char **cmd_args)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	printf("Executing command: %s\n", data->cmd_path);
-	while ( cmd_args[i] != NULL)
+	while (cmd_args[i] != NULL)
 	{
 		printf("arg[%d]: %s\n", i, cmd_args[i]);
 		i++;
@@ -46,15 +46,6 @@ void	ft_execute_command(t_data *data, char **cmd_args)
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
 	exit(EXIT_FAILURE);
-}
-
-void	ft_setup_pipes(int pipefd[2])
-{
-	if (pipe(pipefd) == -1)
-	{
-		perror("pipe");
-		exit(EXIT_FAILURE);
-	}
 }
 
 void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
@@ -83,19 +74,6 @@ void	ft_handle_parent_process(pid_t pid, int pipefd[2], int command)
 		close(pipefd[0]);
 }
 
-void	ft_pipe_error(t_data *data, char	**cmd_args)
-{
-	perror("fork");
-	ft_free_cmd(data, cmd_args);
-	return;
-}
-
-void	ft_free_cmd(t_data *data, char	**cmd_args)
-{
-	ft_free((void **)&data->cmd_path);
-	ft_free_array((void **)cmd_args);
-}
-
 void	ft_execute(t_data *data)
 {
 	int		pipefd[2];
@@ -106,7 +84,8 @@ void	ft_execute(t_data *data)
 	command = 0;
 	while (command <= data->cmd_count)
 	{
-		cmd_args = ft_tokens_to_args(data->commands[command].tokens, data->commands[command].token_count);
+		cmd_args = ft_tokens_to_args(data->commands[command].tokens, \
+			data->commands[command].token_count);
 		ft_getpath(data, command);
 		ft_setup_pipes(pipefd);
 		pid = fork();
@@ -118,10 +97,8 @@ void	ft_execute(t_data *data)
 			ft_execute_command(data, cmd_args);
 		}
 		else
-		{
 			ft_handle_parent_process(pid, pipefd, command);
-			ft_free_cmd(data, cmd_args);
-		}
+		ft_free_cmd(data, cmd_args);
 		command++;
 	}
 }
