@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/13 22:58:51 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/20 12:04:00 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 void	ft_process_input(t_data *data)
 {
-	int			i;
+	int	i;
 
 	i = 0;
 	while (data->input[i] != '\n' && data->input[i] != '\0')
