@@ -401,3 +401,4 @@ FodyWeavers.xsd
 
 # C object files
 *.o
+includes/libft/libft.a

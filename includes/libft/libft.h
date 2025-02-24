@@ -361,4 +361,7 @@ void	ft_dlstadd_mid(t_dlist *prev, t_dlist *next, t_dlist *new);
 /** @brief Safe version of free, resets ptr to NULL after freeing memory */
 void	ft_free(void **ptr);
 
+/** @brief Safe version for free arrays, uses ft_free */
+void	ft_free_array(void **array);
+
 #endif

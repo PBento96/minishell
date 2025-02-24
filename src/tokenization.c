@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/01/28 11:59:24 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/20 11:27:25 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,24 +70,29 @@ static t_token	ft_parse_token(char **ptr)
 	return (token);
 }
 
-t_token	*ft_tokenize_input(char *input, int *token_count)
+void	ft_tokenize_input(t_data *data)
 {
-	t_token	*tokens;
 	t_token	token;
 	char	*ptr;
 	int		count;
 
-	tokens = malloc(sizeof(t_token) * MAX_TOKENS);
-	ptr = input;
+	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
+	ptr = data->input;
 	count = 0;
+	data->cmd_count = 0;
 	while (*ptr)
 	{
 		token = ft_parse_token(&ptr);
-		if (token.value != NULL)
-			tokens[count++] = token;
+		if (token.value && token.type != PIPE)
+		{
+			data->commands[data->cmd_count].tokens[count++] = token;
+			data->commands[data->cmd_count].token_count = count;
+		}
+		if (token.type == PIPE)
+		{
+			data->cmd_count++;
+			count = 0;
+		}
 		ptr = ft_skip_whitespace(ptr);
 	}
-	tokens[count] = (t_token){0, NULL};
-	*token_count = count;
-	return (tokens);
 }

@@ -17,3 +17,6 @@ norm:
 		fi; \
 		echo >> ${NORM_LOGS}; \
 	done
+
+run: re
+	${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}

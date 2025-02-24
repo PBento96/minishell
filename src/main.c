@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/28 09:47:54 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/02/20 12:04:00 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,88 +18,72 @@
 /* Adds input to command history               */
 /* It now needs to parse and exec the input    */
 
-void	ft_process_input(char *input, char **env)
+void	ft_process_input(t_data *data)
 {
-	int			command_count;
-	t_command	*commands;
-	int			i;
+	int	i;
 
-	(void)env;
 	i = 0;
-	while (input[i] != '\n' && input[i] != '\0')
+	while (data->input[i] != '\n' && data->input[i] != '\0')
 		i++;
-	if (input[i] == '\n')
-		input[i] = '\0';
-	if (ft_strlen(input) == 0)
+	if (data->input[i] == '\n')
+		data->input[i] = '\0';
+	if (ft_strlen(data->input) == 0)
 	{
-		free(input);
-		printf("\n");
+		ft_free((void **) &(data->input));
 		return ;
 	}
-	add_history(input);
-	commands = ft_parse_input(input, &command_count);
-	ft_print_commands(commands, command_count);
-	ft_free_commands(commands, command_count);
-	free(input);
+	add_history(data->input);
+	ft_tokenize_input(data);
+	ft_execute(data);
+	ft_free((void **) &(data->input));
 }
 
-char	*ft_get_user_input(void)
+static void	ft_iohandler(t_data *data)
 {
-	char	*input;
-
-	input = readline("");
-	if (input == NULL)
-		exit(EXIT_FAILURE);
-	return (input);
-}
-
-/* Shows prompt with working directory */
-
-void	ft_print_prompt(void)
-{
-	char	cwd[MAX_INPUT_SIZE];
-
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	if (!getcwd(data->cwd, sizeof(data->cwd)))
 	{
 		perror("getcwd");
-		exit(EXIT_FAILURE);
+		ft_shutdown(&data, ERR_IO);
 	}
-	ft_printf("Minishell:%s> ", cwd);
+	ft_printf("%s > ", data->cwd);
+	data->input = readline("");
+	if (!data->input)
+	{
+		perror("readline");
+		ft_shutdown(&data, ERR_IO);
+	}
+	ft_process_input(data);
 }
 
 static void	ft_sighandler(int signum, siginfo_t *info, void *context)
 {
+	t_data	*data;
+
 	(void)info;
-	(void)context;
+	data = (t_data *)context;
 	if (signum == SIGINT || signum == SIGQUIT)
-		exit(EXIT_FAILURE);
+		ft_shutdown(&data, OK);
 }
 
 /* Should start signal handling before running loop */
 
 int	main(int argc, char **argv, char **env)
 {
-	int					running;
-	char				*input;
 	struct sigaction	sa;
+	t_data				*data;
 
 	(void)argc;
 	(void)argv;
-	running = 1;
-	ft_header();
+	if (ft_initilaize(&data, env))
+		ft_shutdown(&data, NOK);
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGINT);
 	sigaddset(&sa.sa_mask, SIGQUIT);
 	sa.sa_sigaction = &ft_sighandler;
 	sa.sa_flags = SA_SIGINFO;
-	sigaction(SIGINT, &sa, NULL);
-	sigaction(SIGQUIT, &sa, NULL);
-	while (running)
-	{
-		ft_print_prompt();
-		input = ft_get_user_input();
-		ft_process_input(input, env);
-	}
-	ft_printf("Exiting Minishell\n");
-	return (EXIT_SUCCESS);
+	sigaction(SIGINT, &sa, (void *)data);
+	sigaction(SIGQUIT, &sa, (void *)data);
+	while (true)
+		ft_iohandler(data);
+	ft_shutdown(&data, OK);
 }

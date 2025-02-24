@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/01/28 11:54:06 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/20 11:24:18 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,9 @@
 # define OP_AND "&&"
 # define OP_WILD "*"
 # define MAX_INPUT_SIZE 1024
+# define MAX_CWD_SIZE 4096
 # define MAX_PIPE_COUNT 10
 # define MAX_TOKENS 100
-# define EXIT_SUCCESS 0
-# define EXIT_FAILURE 1
 
 typedef enum e_token_type
 {
@@ -64,16 +63,39 @@ typedef struct s_token
 
 typedef struct s_command
 {
-	t_token	*tokens;
+	t_token	tokens[MAX_TOKENS];
 	int		token_count;
 }	t_command;
 
-void		ft_header(void);
-t_command	*ft_parse_input(char *input, int *command_count);
-void		ft_print_commands(t_command *commands, int command_count);
-t_token		*ft_tokenize_input(char *input, int *token_count);
-void		ft_free_commands(t_command *commands, int command_count);
-char		*ft_parse_word(char **ptr);
-bool		ft_is_builtin(const char *command);
+typedef struct s_data
+{
+	t_command	commands[MAX_PIPE_COUNT];
+	char		cwd[MAX_CWD_SIZE];
+	char		**env;
+	char		*input;
+	char		*cmd_path;
+	int8_t		cmd_count;
+	int8_t		retval;
+}	t_data;
+
+// Parsing
+void	ft_tokenize_input(t_data *data);
+char	*ft_parse_word(char **ptr);
+bool	ft_is_builtin(const char *command);
+
+// Memory
+int		ft_initilaize(t_data **data, char **env);
+void	ft_shutdown(t_data **data, int retval);
+
+// Execution
+void	ft_execute(t_data *data);
+
+// Pathing
+void	ft_getpath(t_data *data, int i);
+
+// Error handling
+void	ft_setup_pipes(int pipefd[2]);
+void	ft_pipe_error(t_data *data, char	**cmd_args);
+void	ft_free_cmd(t_data *data, char	**cmd_args);
 
 #endif
