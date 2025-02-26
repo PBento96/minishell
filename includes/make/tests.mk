@@ -19,4 +19,5 @@ norm:
 	done
 
 run: re
+	${MAKE} fclean
 	${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}
