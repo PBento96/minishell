@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/20 11:25:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/05 14:41:12 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,10 @@ void	ft_execute(t_data *data)
 		else if (pid == 0)
 		{
 			ft_handle_pipes(data, pipefd, command);
-			ft_execute_command(data, cmd_args);
+			if (data->commands[command].tokens->type == BUILTIN)
+				ft_execute_builtin(data, cmd_args);
+			else
+				ft_execute_command(data, cmd_args);
 		}
 		else
 			ft_handle_parent_process(pid, pipefd, command);

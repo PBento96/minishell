@@ -23,7 +23,8 @@ LIBFT_REPO = git@github.com:PBento96/libft.git
 ##	TESTERS
 VALGRIND		=	valgrind --leak-check=full --show-leak-kinds=all -s \
 	--track-origins=yes --trace-children=yes --error-limit=no --track-fds=yes
-VALGRIND_LOGS	=	--log-file=${LOGS_DIR}/valgrind.log
+VALGRIND_LOGS	=	--log-file=${VGRIND_LOGFILE}
+VGRIND_LOGFILE	=	${LOGS_DIR}/valgrind.log
 GDB				=	gdb
 NORM_LOGS		=	${LOGS_DIR}/norm.log
 
