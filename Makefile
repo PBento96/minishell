@@ -5,7 +5,8 @@ NAME	=	minishell
 include	./includes/make/vars.mk
 
 ##	C FILES
-SRC_FILES	=	main.c startup.c
+SRC_FILES	=	main.c startup.c parser.c tokenization.c shutdown.c execute.c \
+	pathing.c error_handle.c execute_builtin.c
 SRC			=	${addprefix ./src/, ${SRC_FILES}}
 OBJ			=	${SRC:.c=.o}
 
@@ -32,4 +33,4 @@ include	./includes/make/tests.mk
 
 .PHONY: all clean fclean re bonus init \
 	libft libft_clone libft_re libft_clean libft_fclean \
-	norm
+	norm run print_valgrind_results

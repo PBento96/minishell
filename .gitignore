@@ -400,4 +400,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # C object files
-*.o
+**/*.o
+includes/libft/libft.a
