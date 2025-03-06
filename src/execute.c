@@ -12,12 +12,11 @@
 
 #include "minishell.h"
 
-void	ft_execute_command(t_data *data, char **cmd_args)
+void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
-	int	i;
-	i = 0;
+	int		i;
 
-	printf("Executing command: %s\n", data->cmd_path);
+	i = 0;
 	while (cmd_args[i] != NULL)
 	{
 		printf("arg[%d]: %s\n", i, cmd_args[i]);
@@ -26,8 +25,11 @@ void	ft_execute_command(t_data *data, char **cmd_args)
 	if (type == BUILTIN)
 		ft_execute_builtin(data, cmd_args);
 	else
+	{
+		printf("Executing command: %s\n", data->cmd_path);
 		execve(data->cmd_path, cmd_args, data->env);
-	perror("execve");
+		perror("execve");
+	}
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
 	exit(EXIT_FAILURE);
@@ -50,14 +52,13 @@ void	ft_execute(t_data *data)
 	int		c;
 	char	**cmd_args;
 
-	c = 0;
-	while (c <= data->cmd_count && !g_signal)
+	c = -1;
+	while (++c <= data->cmd_count && !g_signal)
 	{
 		cmd_args = ft_tokens_to_args(data->commands[c].tokens, \
 			data->commands[c].token_count);
 		ft_getpath(data, c);
-		if (command != data->cmd_count)
-			ft_setup_pipes(pipefd);
+		ft_setup_pipes(pipefd);
 		pid = fork();
 		if (pid == -1)
 			ft_pipe_error(data, cmd_args);
@@ -69,6 +70,5 @@ void	ft_execute(t_data *data)
 		else
 			ft_handle_parent_process(pid, pipefd, c);
 		ft_free_cmd(data, cmd_args);
-		c++;
 	}
 }

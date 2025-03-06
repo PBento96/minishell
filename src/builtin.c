@@ -85,20 +85,25 @@ void	ft_unset(t_data *data, char **cmd_args)
 	(void)cmd_args;
 }
 
-int	ft_execute_builtin(t_data *data, char **cmd_args)
+void	ft_execute_builtin(t_data *data, char **cmd_args)
 {
+	char	*cmd;
+	size_t	len;
+
+	cmd = cmd_args[0];
+	len = ft_strlen(cmd) + 1;
 	printf("Executing builtin: %s\n", data->cmd_path);
-	if (strcmp(cmd_args[0], OP_PWD) == 0)
+	if (!ft_strncmp(OP_EXT, cmd, len))
+		kill(getppid(), SIGTERM);
+	if (!ft_strncmp(OP_PWD, cmd, len))
 		ft_pwd(data);
-	else if (strcmp(cmd_args[0], OP_ENV) == 0)
-		ft_env(data);
-	else if (strcmp(cmd_args[0], OP_ECHO) == 0)
+	if (!ft_strncmp(OP_ECHO, cmd, len))
 		ft_echo(cmd_args);
-	else if (strcmp(cmd_args[0], OP_EXT) == 0)
-		ft_exit(data, cmd_args);
-	else if (strcmp(cmd_args[0], OP_EXP) == 0)
+	if (!ft_strncmp(OP_ENV, cmd, len))
+		ft_env(data);
+	if (!ft_strncmp(OP_EXP, cmd, len))
 		ft_export(data, cmd_args);
-	else if (strcmp(cmd_args[0], OP_UNS) == 0)
+	if (!ft_strncmp(OP_UNS, cmd, len))
 		ft_unset(data, cmd_args);
-	return (0);
+	(void) data;
 }

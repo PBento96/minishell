@@ -93,13 +93,10 @@ void	ft_shutdown(t_data **data, int retval);
 
 // Execution
 void	ft_execute(t_data *data);
+
+
+// Builtin
 void	ft_execute_builtin(t_data *data, char **cmd_args);
-
-// Builtin
-int		ft_execute_builtin(t_data *data, char **cmd_args);
-
-// Builtin
-int		ft_execute_builtin(t_data *data, char **cmd_args);
 
 // Pathing
 void	ft_getpath(t_data *data, int i);
