@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/20 11:25:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/04 13:52:50 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	ft_execute_command(t_data *data, char **cmd_args)
 {
-	int		i;
-
+	int	i;
 	i = 0;
+
 	printf("Executing command: %s\n", data->cmd_path);
 	while (cmd_args[i] != NULL)
 	{
