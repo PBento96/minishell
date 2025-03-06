@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/06 20:52:27 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/03 14:27:23 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,24 @@ char	*ft_parse_word(char **ptr)
 		(*ptr)++;
 	word = ft_substr(start, 0, *ptr - start);
 	return (word);
+}
+
+char	**ft_tokens_to_args(t_token *tokens, int token_count)
+{
+	char	**args;
+	int		i;
+
+	args = (char **)malloc((token_count + 1) * sizeof(char *));
+	if (!args)
+		return (NULL);
+	i = 0;
+	while (i < token_count)
+	{
+		args[i] = ft_strdup(tokens[i].value);
+		i++;
+	}
+	args[i] = NULL;
+	return (args);
 }
 
 bool	ft_is_builtin(const char *command)

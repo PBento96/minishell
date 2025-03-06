@@ -6,29 +6,11 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/20 11:25:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/04 13:52:50 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	**ft_tokens_to_args(t_token *tokens, int token_count)
-{
-	char	**args;
-	int		i;
-
-	args = (char **)malloc((token_count + 1) * sizeof(char *));
-	if (!args)
-		return (NULL);
-	i = 0;
-	while (i < token_count)
-	{
-		args[i] = ft_strdup(tokens[i].value);
-		i++;
-	}
-	args[i] = NULL;
-	return (args);
-}
 
 void	ft_execute_command(t_data *data, char **cmd_args)
 {
@@ -48,22 +30,6 @@ void	ft_execute_command(t_data *data, char **cmd_args)
 	exit(EXIT_FAILURE);
 }
 
-void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
-{
-	if (command != 0)
-	{
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-	}
-	if (command != data->cmd_count)
-	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[1]);
-	}
-	close(pipefd[0]);
-	close(pipefd[1]);
-}
-
 void	ft_handle_parent_process(pid_t pid, int pipefd[2], int command)
 {
 	int	status;
@@ -80,25 +46,41 @@ void	ft_execute(t_data *data)
 	pid_t	pid;
 	int		command;
 	char	**cmd_args;
+	pid_t	*pids;
 
 	command = 0;
+	pids = malloc(sizeof(pid_t) * (data->cmd_count + 1));
+	data->prev_pipe = -1;
 	while (command <= data->cmd_count)
 	{
-		cmd_args = ft_tokens_to_args(data->commands[command].tokens, \
+		cmd_args = ft_tokens_to_args(data->commands[command].tokens,
 			data->commands[command].token_count);
 		ft_getpath(data, command);
-		ft_setup_pipes(pipefd);
+		if (command != data->cmd_count)
+			ft_setup_pipes(pipefd);
 		pid = fork();
 		if (pid == -1)
 			ft_pipe_error(data, cmd_args);
 		else if (pid == 0)
 		{
 			ft_handle_pipes(data, pipefd, command);
-			ft_execute_command(data, cmd_args);
+			if (ft_is_builtin(cmd_args[0]))
+				exit(ft_execute_builtin(data, cmd_args));
+			else
+				ft_execute_command(data, cmd_args);
 		}
 		else
-			ft_handle_parent_process(pid, pipefd, command);
+		{
+			pids[command] = pid;
+			if (command != data->cmd_count)
+				close(pipefd[1]);
+			if (data->prev_pipe != -1)
+				close(data->prev_pipe);
+			if (command != data->cmd_count)
+				data->prev_pipe = pipefd[0];
+		}
 		ft_free_cmd(data, cmd_args);
 		command++;
 	}
+	ft_wait_children(data, pids);
 }
