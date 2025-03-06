@@ -19,4 +19,48 @@ norm:
 	done
 
 run: re
+	${MAKE} fclean
 	${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}
+	@${MAKE} -s print_valgrind_results
+
+print_valgrind_results:
+	@echo
+	@LOG=${VGRIND_LOGFILE}; \
+	ERROR="$$(grep 'ERROR SUMMARY:' $${LOG} | sed -nE 's/.* ([0-9,]+) errors from ([0-9,]+) contexts.*/\1 \2/p')" ; \
+	SUPPRESSED_ERRORS="$$(grep 'ERROR SUMMARY:' $${LOG} -A 1 | grep 'suppressed:' | sed -nE 's/.* ([0-9,]+) from ([0-9,]+).*/\1 \2/p')" ; \
+	SUPPRESSED_LEAKS="$$(if grep 'LEAK SUMMARY:' $${LOG} -A 5 | grep 'suppressed:' > /dev/null; then grep 'LEAK SUMMARY:' $${LOG} -A 5 | grep 'suppressed:' | sed -nE 's/.* ([0-9,]+) bytes in ([0-9,]+) blocks.*/\1 \2/p'; else echo '0 0'; fi)" ; \
+	LEAK_DEF="$$(if grep 'definitely lost:' $${LOG} > /dev/null; then grep 'definitely lost:' $${LOG} | sed -nE 's/.* ([0-9,]+) bytes in ([0-9,]+) blocks.*/\1 \2/p'; else echo '0 0'; fi)" ; \
+	LEAK_IND="$$(if grep 'indirectly lost:' $${LOG} > /dev/null; then grep 'indirectly lost:' $${LOG} | sed -nE 's/.* ([0-9,]+) bytes in ([0-9,]+) blocks.*/\1 \2/p'; else echo '0 0'; fi)" ; \
+	LEAK_POS="$$(if grep 'possibly lost:' $${LOG} > /dev/null; then grep 'possibly lost:' $${LOG} | sed -nE 's/.* ([0-9,]+) bytes in ([0-9,]+) blocks.*/\1 \2/p'; else echo '0 0'; fi)" ; \
+	LEAK_REA="$$(if grep 'still reachable:' $${LOG} > /dev/null; then grep 'still reachable:' $${LOG} | sed -nE 's/.* ([0-9,]+) bytes in ([0-9,]+) blocks.*/\1 \2/p'; else echo '0 0'; fi)" ; \
+	if [ "$$(echo $$ERROR | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_RED}WARNING: Valgrind - %s errors in %s contexts!${RESET_ALL}\n" $$ERROR; \
+	else \
+		printf "${C_GREEN}NO ERRORS${RESET_ALL}\n"; \
+	fi; \
+	if [ "$$(echo $$SUPPRESSED_ERRORS | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_YELLOW}WARNING: Valgrind - %s suppressed errors in %s contexts.${RESET_ALL}\n" $$SUPPRESSED_ERRORS; \
+	fi; \
+	if [ "$$(echo $$LEAK_DEF | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_RED}WARNING: Valgrind - %s bytes definitely lost in %s blocks!${RESET_ALL}\n" $$LEAK_DEF; \
+	else \
+		printf "${C_GREEN}NO DEFINITE LEAKS${RESET_ALL}\n"; \
+	fi; \
+	if [ "$$(echo $$LEAK_IND | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_RED}WARNING: Valgrind - %s bytes indirectly lost in %s blocks!${RESET_ALL}\n" $$LEAK_IND; \
+	else \
+		printf "${C_GREEN}NO INDIRECT LEAKS${RESET_ALL}\n"; \
+	fi; \
+	if [ "$$(echo $$LEAK_POS | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_YELLOW}WARNING: Valgrind - %s bytes possibly lost in %s blocks!${RESET_ALL}\n" $$LEAK_POS; \
+	else \
+		printf "${C_GREEN}NO POSSIBLE LEAKS${RESET_ALL}\n"; \
+	fi; \
+	if [ "$$(echo $$LEAK_REA | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_YELLOW}WARNING: Valgrind - %s bytes in %s blocks still reachable!${RESET_ALL}\n" $$LEAK_REA; \
+	else \
+		printf "${C_GREEN}NO REACHABLE LEAKS${RESET_ALL}\n"; \
+	fi; \
+	if [ "$$(echo $$SUPPRESSED_LEAKS | awk '{print $$1}')" != "0" ]; then \
+		printf "${C_YELLOW}WARNING: Valgrind - %s bytes in %s blocks suppressed!${RESET_ALL}\n" $$SUPPRESSED_LEAKS; \
+	fi;

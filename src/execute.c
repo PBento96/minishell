@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/20 11:25:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/06 19:04:22 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ char	**ft_tokens_to_args(t_token *tokens, int token_count)
 	return (args);
 }
 
-void	ft_execute_command(t_data *data, char **cmd_args)
+void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	printf("Executing command: %s\n", data->cmd_path);
@@ -41,7 +41,10 @@ void	ft_execute_command(t_data *data, char **cmd_args)
 		printf("arg[%d]: %s\n", i, cmd_args[i]);
 		i++;
 	}
-	execve(data->cmd_path, cmd_args, data->env);
+	if (type == BUILTIN)
+		ft_execute_builtin(data, cmd_args);
+	else
+		execve(data->cmd_path, cmd_args, data->env);
 	perror("execve");
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
@@ -78,27 +81,27 @@ void	ft_execute(t_data *data)
 {
 	int		pipefd[2];
 	pid_t	pid;
-	int		command;
+	int		c;
 	char	**cmd_args;
 
-	command = 0;
-	while (command <= data->cmd_count)
+	c = 0;
+	while (c <= data->cmd_count && !g_signal)
 	{
-		cmd_args = ft_tokens_to_args(data->commands[command].tokens, \
-			data->commands[command].token_count);
-		ft_getpath(data, command);
+		cmd_args = ft_tokens_to_args(data->commands[c].tokens, \
+			data->commands[c].token_count);
+		ft_getpath(data, c);
 		ft_setup_pipes(pipefd);
 		pid = fork();
 		if (pid == -1)
 			ft_pipe_error(data, cmd_args);
 		else if (pid == 0)
 		{
-			ft_handle_pipes(data, pipefd, command);
-			ft_execute_command(data, cmd_args);
+			ft_handle_pipes(data, pipefd, c);
+			ft_execute_command(data, cmd_args, data->commands[c].tokens->type);
 		}
 		else
-			ft_handle_parent_process(pid, pipefd, command);
+			ft_handle_parent_process(pid, pipefd, c);
 		ft_free_cmd(data, cmd_args);
-		command++;
+		c++;
 	}
 }

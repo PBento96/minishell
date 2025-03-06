@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/02/20 12:04:00 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/06 19:36:02 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_signal = 0;
 
 /* Input first spa treatment                   */
 /* Closes the input if it ends with newline    */
@@ -45,7 +47,7 @@ static void	ft_iohandler(t_data *data)
 		perror("getcwd");
 		ft_shutdown(&data, ERR_IO);
 	}
-	ft_printf("%s > ", data->cwd);
+	ft_printf(C_BLUE"%s > "RESET_COLOR, data->cwd);
 	data->input = readline("");
 	if (!data->input)
 	{
@@ -57,12 +59,10 @@ static void	ft_iohandler(t_data *data)
 
 static void	ft_sighandler(int signum, siginfo_t *info, void *context)
 {
-	t_data	*data;
-
 	(void)info;
-	data = (t_data *)context;
-	if (signum == SIGINT || signum == SIGQUIT)
-		ft_shutdown(&data, OK);
+	(void)context;
+	if (signum == SIGINT || signum == SIGQUIT || signum == SIGTERM)
+		g_signal = SIGTERM;
 }
 
 /* Should start signal handling before running loop */
@@ -79,11 +79,13 @@ int	main(int argc, char **argv, char **env)
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGINT);
 	sigaddset(&sa.sa_mask, SIGQUIT);
+	sigaddset(&sa.sa_mask, SIGTERM);
 	sa.sa_sigaction = &ft_sighandler;
 	sa.sa_flags = SA_SIGINFO;
-	sigaction(SIGINT, &sa, (void *)data);
-	sigaction(SIGQUIT, &sa, (void *)data);
-	while (true)
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+	while (!g_signal)
 		ft_iohandler(data);
 	ft_shutdown(&data, OK);
 }

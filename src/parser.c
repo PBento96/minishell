@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/06 20:52:27 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/05 14:33:27 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,12 @@ char	*ft_parse_word(char **ptr)
 
 bool	ft_is_builtin(const char *command)
 {
-	int	is;
-
-	is = 0;
-	if (strcmp(command, OP_PWD) == 0)
-		is = 1;
-	else if (strcmp(command, OP_ENV) == 0)
-		is = 1;
-	else if (strcmp(command, OP_ECHO) == 0)
-		is = 1;
-	else if (strcmp(command, OP_EXT) == 0)
-		is = 1;
-	else if (strcmp(command, OP_EXP) == 0)
-		is = 1;
-	else if (strcmp(command, OP_UNS) == 0)
-		is = 1;
-	else
-		is = 0;
-	return (is);
+	if (strcmp(command, OP_PWD) == 0
+		|| strcmp(command, OP_ENV) == 0
+		|| strcmp(command, OP_ECHO) == 0
+		|| strcmp(command, OP_EXT) == 0
+		|| strcmp(command, OP_EXP) == 0
+		|| strcmp(command, OP_UNS) == 0)
+		return (true);
+	return (false);
 }
