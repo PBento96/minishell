@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/06 19:04:22 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/06 23:52:36 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ void	ft_execute(t_data *data)
 	pid_t	pid;
 	int		c;
 	char	**cmd_args;
-	pid_t	*pids;
 
 	c = -1;
 	while (++c <= data->cmd_count && !g_signal)
@@ -72,5 +71,4 @@ void	ft_execute(t_data *data)
 			ft_handle_parent_process(pid, pipefd, c);
 		ft_free_cmd(data, cmd_args);
 	}
-	ft_wait_children(data, pids);
 }
