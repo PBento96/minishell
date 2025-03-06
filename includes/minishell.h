@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/06 19:08:52 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/02/20 11:24:18 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ typedef struct s_data
 	char		*input;
 	char		*cmd_path;
 	int8_t		cmd_count;
+	int			prev_pipe;
 	int8_t		retval;
 }	t_data;
 
@@ -84,6 +85,7 @@ extern int	g_signal;
 void	ft_tokenize_input(t_data *data);
 char	*ft_parse_word(char **ptr);
 bool	ft_is_builtin(const char *command);
+char	**ft_tokens_to_args(t_token *tokens, int token_count);
 
 // Memory
 int		ft_initilaize(t_data **data, char **env);
@@ -93,8 +95,16 @@ void	ft_shutdown(t_data **data, int retval);
 void	ft_execute(t_data *data);
 void	ft_execute_builtin(t_data *data, char **cmd_args);
 
+// Builtin
+int		ft_execute_builtin(t_data *data, char **cmd_args);
+
 // Pathing
 void	ft_getpath(t_data *data, int i);
+
+// Pipe
+void	ft_handle_pipes(t_data *data, int pipefd[2], int command);
+void	ft_wait_children(t_data *data, pid_t *pids);
+void	ft_pipe_error(t_data *data, char	**cmd_args);
 
 // Error handling
 void	ft_setup_pipes(int pipefd[2]);
