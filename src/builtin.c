@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/04 13:27:13 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/06 20:13:00 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,20 +85,24 @@ void	ft_unset(t_data *data, char **cmd_args)
 	(void)cmd_args;
 }
 
-int	ft_execute_builtin(t_data *data, char **cmd_args)
+void	ft_execute_builtin(t_data *data, char **cmd_args)
 {
-	printf("Executing builtin: %s\n", data->cmd_path);
-	if (strcmp(cmd_args[0], OP_PWD) == 0)
-		ft_pwd(data);
-	else if (strcmp(cmd_args[0], OP_ENV) == 0)
-		ft_env(data);
-	else if (strcmp(cmd_args[0], OP_ECHO) == 0)
-		ft_echo(cmd_args);
-	else if (strcmp(cmd_args[0], OP_EXT) == 0)
-		ft_exit(data, cmd_args);
-	else if (strcmp(cmd_args[0], OP_EXP) == 0)
-		ft_export(data, cmd_args);
-	else if (strcmp(cmd_args[0], OP_UNS) == 0)
-		ft_unset(data, cmd_args);
-	return (0);
+	char	*cmd;
+	size_t	len;
+
+	cmd = cmd_args[0];
+	len = ft_strlen(cmd) + 1;
+	if (!ft_strncmp(OP_EXT, cmd, len))
+		kill(getppid(), SIGTERM);
+	if (!ft_strncmp(OP_PWD, cmd, len))
+		return ;
+	if (!ft_strncmp(OP_ECHO, cmd, len))
+		return ;
+	if (!ft_strncmp(OP_ENV, cmd, len))
+		return ;
+	if (!ft_strncmp(OP_EXP, cmd, len))
+		return ;
+	if (!ft_strncmp(OP_UNS, cmd, len))
+		return ;
+	(void) data;
 }
