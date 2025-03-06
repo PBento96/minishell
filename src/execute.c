@@ -49,7 +49,6 @@ void	ft_execute(t_data *data)
 	pid_t	pid;
 	int		c;
 	char	**cmd_args;
-	pid_t	*pids;
 
 	c = 0;
 	while (c <= data->cmd_count && !g_signal)
@@ -72,5 +71,4 @@ void	ft_execute(t_data *data)
 		ft_free_cmd(data, cmd_args);
 		c++;
 	}
-	ft_wait_children(data, pids);
 }
