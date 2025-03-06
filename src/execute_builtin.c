@@ -6,13 +6,13 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 14:41:32 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/06 19:16:51 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/06 19:37:00 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_builtin(t_data *data, char **cmd_args)
+void	ft_execute_builtin(t_data *data, char **cmd_args)
 {
 	char	*cmd;
 	size_t	len;
@@ -22,10 +22,4 @@ static void	ft_builtin(t_data *data, char **cmd_args)
 	if (!ft_strncmp(OP_EXT, cmd, len))
 		kill(getppid(), SIGTERM);
 	(void) data;
-}
-
-void	ft_execute_builtin(t_data *data, char **cmd_args)
-{
-	ft_builtin(data, cmd_args);
-	perror("ft_builtin");
 }

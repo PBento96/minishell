@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/06 19:21:08 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/06 19:36:02 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	ft_process_input(t_data *data)
 
 static void	ft_iohandler(t_data *data)
 {
-	ft_printf("%d", g_signal);
 	if (!getcwd(data->cwd, sizeof(data->cwd)))
 	{
 		perror("getcwd");
