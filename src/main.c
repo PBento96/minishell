@@ -6,11 +6,13 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/05 15:46:40 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/06 19:21:08 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_signal = 0;
 
 /* Input first spa treatment                   */
 /* Closes the input if it ends with newline    */
@@ -40,12 +42,13 @@ void	ft_process_input(t_data *data)
 
 static void	ft_iohandler(t_data *data)
 {
+	ft_printf("%d", g_signal);
 	if (!getcwd(data->cwd, sizeof(data->cwd)))
 	{
 		perror("getcwd");
 		ft_shutdown(&data, ERR_IO);
 	}
-	ft_printf("%s > ", data->cwd);
+	ft_printf(C_BLUE"%s > "RESET_COLOR, data->cwd);
 	data->input = readline("");
 	if (!data->input)
 	{
@@ -57,12 +60,10 @@ static void	ft_iohandler(t_data *data)
 
 static void	ft_sighandler(int signum, siginfo_t *info, void *context)
 {
-	t_data	*data;
-
 	(void)info;
-	data = (t_data *)context;
+	(void)context;
 	if (signum == SIGINT || signum == SIGQUIT || signum == SIGTERM)
-		ft_shutdown(&data, OK);
+		g_signal = SIGTERM;
 }
 
 /* Should start signal handling before running loop */
@@ -82,10 +83,10 @@ int	main(int argc, char **argv, char **env)
 	sigaddset(&sa.sa_mask, SIGTERM);
 	sa.sa_sigaction = &ft_sighandler;
 	sa.sa_flags = SA_SIGINFO;
-	sigaction(SIGINT, &sa, (void *)data);
-	sigaction(SIGQUIT, &sa, (void *)data);
-	sigaction(SIGTERM, &sa, (void *)data);
-	while (true)
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+	while (!g_signal)
 		ft_iohandler(data);
 	ft_shutdown(&data, OK);
 }
