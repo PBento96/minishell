@@ -6,7 +6,8 @@ include	./includes/make/vars.mk
 
 ##	C FILES
 SRC_FILES	=	main.c startup.c parser.c tokenization.c shutdown.c execute.c \
-	pathing.c error_handle.c execute_builtin.c
+				pathing.c error_handle.c builtin.c mario.c execute_builtin.c pathing.c 
+
 SRC			=	${addprefix ./src/, ${SRC_FILES}}
 OBJ			=	${SRC:.c=.o}
 
