@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/20 11:25:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/06 19:04:22 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 	int		i;
 
 	i = 0;
-	printf("Executing command: %s\n", data->cmd_path);
 	while (cmd_args[i] != NULL)
 	{
 		printf("arg[%d]: %s\n", i, cmd_args[i]);
@@ -26,8 +25,11 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 	if (type == BUILTIN)
 		ft_execute_builtin(data, cmd_args);
 	else
+	{
+		printf("Executing command: %s\n", data->cmd_path);
 		execve(data->cmd_path, cmd_args, data->env);
-	perror("execve");
+		perror("execve");
+	}
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
 	exit(EXIT_FAILURE);
@@ -51,7 +53,8 @@ void	ft_execute(t_data *data)
 	char	**cmd_args;
 	pid_t	*pids;
 
-	c = 0;
+	c = -1;
+	while (++c <= data->cmd_count && !g_signal)
 	{
 		cmd_args = ft_tokens_to_args(data->commands[c].tokens, \
 			data->commands[c].token_count);
@@ -68,7 +71,6 @@ void	ft_execute(t_data *data)
 		else
 			ft_handle_parent_process(pid, pipefd, c);
 		ft_free_cmd(data, cmd_args);
-		c++;
 	}
 	ft_wait_children(data, pids);
 }

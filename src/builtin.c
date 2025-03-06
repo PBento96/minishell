@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/06 20:13:00 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/04 13:27:13 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,17 +92,18 @@ void	ft_execute_builtin(t_data *data, char **cmd_args)
 
 	cmd = cmd_args[0];
 	len = ft_strlen(cmd) + 1;
+	printf("Executing builtin: %s\n", data->cmd_path);
 	if (!ft_strncmp(OP_EXT, cmd, len))
 		kill(getppid(), SIGTERM);
 	if (!ft_strncmp(OP_PWD, cmd, len))
-		return ;
+		ft_pwd(data);
 	if (!ft_strncmp(OP_ECHO, cmd, len))
-		return ;
+		ft_echo(cmd_args);
 	if (!ft_strncmp(OP_ENV, cmd, len))
-		return ;
+		ft_env(data);
 	if (!ft_strncmp(OP_EXP, cmd, len))
-		return ;
+		ft_export(data, cmd_args);
 	if (!ft_strncmp(OP_UNS, cmd, len))
-		return ;
+		ft_unset(data, cmd_args);
 	(void) data;
 }
