@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/05 14:42:49 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/06 10:28:53 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	ft_shutdown(t_data **data, int retval);
 
 // Execution
 void	ft_execute(t_data *data);
-void	ft_execute_builtin(t_data *data, char **cmd_args);
+bool	ft_execute_builtin(t_data *data, char **cmd_args);
 
 // Pathing
 void	ft_getpath(t_data *data, int i);
