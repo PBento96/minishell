@@ -47,7 +47,6 @@ void	ft_echo(char **cmd_args)
 			ft_printf(" ");
 		i++;
 	}
-
 	if (newline)
 		ft_printf("\n");
 }
@@ -67,31 +66,6 @@ void	ft_env(t_data *data)
 		ft_printf("%s\n", data->env[i]);
 		i++;
 	}
-}
-
-void	ft_exit(t_data *data, char **cmd_args)
-{
-	(void)data;
-	(void)cmd_args;
-	kill(getppid(), SIGTERM);
-}
-
-void	ft_export(t_data *data, char **cmd_args)
-{
-	(void)data;
-	(void)cmd_args;
-}
-
-void	ft_unset(t_data *data, char **cmd_args)
-{
-	(void)data;
-	(void)cmd_args;
-}
-
-void	ft_cd(t_data *data, char **cmd_args)
-{
-	(void)data;
-	(void)cmd_args;
 }
 
 void	ft_execute_builtin(t_data *data, char **cmd_args)

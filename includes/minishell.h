@@ -98,6 +98,10 @@ void	ft_execute(t_data *data);
 
 // Builtin
 void	ft_execute_builtin(t_data *data, char **cmd_args);
+void	ft_exit(t_data *data, char **cmd_args);
+void	ft_export(t_data *data, char **cmd_args);
+void	ft_unset(t_data *data, char **cmd_args);
+void	ft_cd(t_data *data, char **cmd_args);
 
 // Pathing
 void	ft_getpath(t_data *data, int i);
