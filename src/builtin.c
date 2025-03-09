@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/04 13:27:13 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/09 11:48:28 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int	is_valid_echo_flag(const char *flag)
 {
-	const char *ch = flag + 1;
+	const char	*ch = flag + 1;
+
 	while (*ch != '\0')
 	{
 		if (*ch != 'n')
@@ -26,13 +27,14 @@ int	is_valid_echo_flag(const char *flag)
 
 void	ft_echo(char **cmd_args)
 {
-	int newline;
-	int start;
-	int i;
+	int	newline;
+	int	start;
+	int	i;
 
 	newline = 1;
 	start = 1;
-	if (cmd_args[1] != NULL && cmd_args[1][0] == '-' && is_valid_echo_flag(cmd_args[1]))
+	if (cmd_args[1] != NULL && cmd_args[1][0] == '-'
+		&& is_valid_echo_flag(cmd_args[1]))
 	{
 		newline = 0;
 		start = 2;
@@ -71,6 +73,7 @@ void	ft_exit(t_data *data, char **cmd_args)
 {
 	(void)data;
 	(void)cmd_args;
+	kill(getppid(), SIGTERM);
 }
 
 void	ft_export(t_data *data, char **cmd_args)
@@ -85,6 +88,12 @@ void	ft_unset(t_data *data, char **cmd_args)
 	(void)cmd_args;
 }
 
+void	ft_cd(t_data *data, char **cmd_args)
+{
+	(void)data;
+	(void)cmd_args;
+}
+
 void	ft_execute_builtin(t_data *data, char **cmd_args)
 {
 	char	*cmd;
@@ -94,7 +103,7 @@ void	ft_execute_builtin(t_data *data, char **cmd_args)
 	len = ft_strlen(cmd) + 1;
 	printf("Executing builtin: %s\n", data->cmd_path);
 	if (!ft_strncmp(OP_EXT, cmd, len))
-		kill(getppid(), SIGTERM);
+		ft_exit(data, cmd_args);
 	if (!ft_strncmp(OP_PWD, cmd, len))
 		ft_pwd(data);
 	if (!ft_strncmp(OP_ECHO, cmd, len))
@@ -105,5 +114,7 @@ void	ft_execute_builtin(t_data *data, char **cmd_args)
 		ft_export(data, cmd_args);
 	if (!ft_strncmp(OP_UNS, cmd, len))
 		ft_unset(data, cmd_args);
+	if (!ft_strncmp(OP_CD, cmd, len))
+		ft_cd(data, cmd_args);
 	(void) data;
 }

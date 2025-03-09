@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/06 23:52:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/07 09:15:56 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,40 +35,57 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 	exit(EXIT_FAILURE);
 }
 
-void	ft_handle_parent_process(pid_t pid, int pipefd[2], int command)
+static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 {
-	int	status;
+	*cmd_args = ft_tokens_to_args(data->commands[cmd_index].tokens,
+			data->commands[cmd_index].token_count);
+	ft_getpath(data, cmd_index);
+}
 
-	waitpid(pid, &status, 0);
-	close(pipefd[1]);
-	if (command != 0)
-		close(pipefd[0]);
+static void	ft_create_child_process(t_data *data, int pipefd[2],
+	int cmd_index, char **cmd_args)
+{
+	if (cmd_index < data->cmd_count)
+		ft_setup_pipes(pipefd);
+	data->pids[cmd_index] = fork();
+	if (data->pids[cmd_index] == -1)
+		ft_pipe_error(data, cmd_args);
+	else if (data->pids[cmd_index] == 0)
+	{
+		ft_handle_pipes(data, pipefd, cmd_index);
+		ft_execute_command(data, cmd_args,
+			data->commands[cmd_index].tokens->type);
+	}
+}
+
+static void	ft_handle_parent(t_data *data, int pipefd[2], int cmd_index)
+{
+	if (cmd_index < data->cmd_count)
+		close(pipefd[1]);
+	if (data->prev_pipe != -1)
+		close(data->prev_pipe);
+	if (cmd_index < data->cmd_count)
+		data->prev_pipe = pipefd[0];
 }
 
 void	ft_execute(t_data *data)
 {
 	int		pipefd[2];
-	pid_t	pid;
-	int		c;
+	int		cmd_index;
 	char	**cmd_args;
 
-	c = -1;
-	while (++c <= data->cmd_count && !g_signal)
+	cmd_index = -1;
+	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
+	if (!data->pids)
+		return ;
+	data->prev_pipe = -1;
+	while (++cmd_index <= data->cmd_count && !g_signal)
 	{
-		cmd_args = ft_tokens_to_args(data->commands[c].tokens, \
-			data->commands[c].token_count);
-		ft_getpath(data, c);
-		ft_setup_pipes(pipefd);
-		pid = fork();
-		if (pid == -1)
-			ft_pipe_error(data, cmd_args);
-		else if (pid == 0)
-		{
-			ft_handle_pipes(data, pipefd, c);
-			ft_execute_command(data, cmd_args, data->commands[c].tokens->type);
-		}
-		else
-			ft_handle_parent_process(pid, pipefd, c);
+		ft_prepare_command(data, cmd_index, &cmd_args);
+		ft_create_child_process(data, pipefd, cmd_index, cmd_args);
+		if (data->pids[cmd_index] > 0)
+			ft_handle_parent(data, pipefd, cmd_index);
 		ft_free_cmd(data, cmd_args);
 	}
+	ft_wait_children(data, data->pids);
 }

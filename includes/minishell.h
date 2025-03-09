@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/06 23:52:08 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/09 11:47:27 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 # define OP_UNS "unset"
 # define OP_ENV "env"
 # define OP_EXT "exit"
+# define OP_CD "cd"
 # define OP_OR "||"
 # define OP_AND "&&"
 # define OP_WILD "*"
@@ -77,6 +78,7 @@ typedef struct s_data
 	int8_t		cmd_count;
 	int			prev_pipe;
 	int8_t		retval;
+	pid_t		*pids;
 }	t_data;
 
 extern int	g_signal;
