@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/06 19:36:02 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/19 21:08:00 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,18 @@ void	ft_process_input(t_data *data)
 
 static void	ft_iohandler(t_data *data)
 {
+	char	prompt[MAX_CWD_SIZE + 20];
+
 	if (!getcwd(data->cwd, sizeof(data->cwd)))
 	{
 		perror("getcwd");
 		ft_shutdown(&data, ERR_IO);
 	}
-	ft_printf(C_BLUE"%s > "RESET_COLOR, data->cwd);
-	data->input = readline("");
+	ft_strlcpy(prompt, "", sizeof(prompt));
+	ft_strlcat(prompt, C_BLUE, sizeof(prompt));
+	ft_strlcat(prompt, data->cwd, sizeof(prompt));
+	ft_strlcat(prompt, " > "RESET_COLOR, sizeof(prompt));
+	data->input = readline(prompt);
 	if (!data->input)
 	{
 		perror("readline");
