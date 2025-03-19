@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/05 14:33:27 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/03/18 14:00:46 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ bool	ft_is_builtin(const char *command)
 		|| strcmp(command, OP_ECHO) == 0
 		|| strcmp(command, OP_EXT) == 0
 		|| strcmp(command, OP_EXP) == 0
-		|| strcmp(command, OP_UNS) == 0)
+		|| strcmp(command, OP_UNS) == 0
+		|| strcmp(command, OP_CD) == 0)
 		return (true);
 	return (false);
 }
