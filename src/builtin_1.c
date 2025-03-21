@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/21 21:58:11 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/21 22:12:06 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	ft_unset(t_data *data, char **cmd_args)
 	(void)data;
 	(void)cmd_args;
 }
-void	ft_setdataenv(t_data *data, char *OLDPWD)
+void	ft_set_data_env(t_data *data, char *OLDPWD)
 {
 	int i;
 
@@ -73,5 +73,5 @@ void	ft_cd(t_data *data, char **cmd_args)
 		return;
 	}
 	getcwd(data->cwd, sizeof(data->cwd));
-	ft_setdataenv(data, OLDPWD);
+	ft_set_data_env(data, OLDPWD);
 }
