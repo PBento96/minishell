@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/07 09:15:56 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/21 20:48:39 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,18 @@ void	ft_execute(t_data *data)
 	while (++cmd_index <= data->cmd_count && !g_signal)
 	{
 		ft_prepare_command(data, cmd_index, &cmd_args);
-		ft_create_child_process(data, pipefd, cmd_index, cmd_args);
-		if (data->pids[cmd_index] > 0)
+		if(data->cmd_count == 0 &&
+			data->commands[cmd_index].tokens->type == BUILTIN)
+		{
+			write(1,"Executing Lone Builtin\n", 23);
+			ft_execute_builtin(data, cmd_args);
+		}
+		else
+		{
+			ft_create_child_process(data, pipefd, cmd_index, cmd_args);
+			if (data->pids[cmd_index] > 0)
 			ft_handle_parent(data, pipefd, cmd_index);
+		}
 		ft_free_cmd(data, cmd_args);
 	}
 	ft_wait_children(data, data->pids);
