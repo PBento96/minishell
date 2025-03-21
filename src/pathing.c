@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:24:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/02/18 10:26:19 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/21 21:20:28 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void	ft_getpath(t_data *data, int i)
 {
 	char	*path;
 	char	**dirs;
-	char	*path_copy;
 
 	path = ft_getenv("PATH", data->env);
 	if (!path)
@@ -64,14 +63,8 @@ void	ft_getpath(t_data *data, int i)
 		data->cmd_path = NULL;
 		return ;
 	}
-	path_copy = ft_strdup(path);
-	if (!path_copy)
-	{
-		data->cmd_path = NULL;
-		return ;
-	}
-	dirs = ft_split(path_copy, ':');
-	ft_free((void **)&path_copy);
+	dirs = ft_split(path, ':');
+	ft_free((void **)&path);
 	if (!dirs)
 	{
 		data->cmd_path = NULL;
