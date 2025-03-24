@@ -6,25 +6,30 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/07 09:14:07 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/24 10:22:46 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_wait_children(t_data *data, pid_t *pids)
+void ft_wait_children(t_data *data, pid_t *pids)
 {
-	int	i;
+    int i;
+    int status;
 
-	i = 0;
-	while (i <= data->cmd_count)
-	{
-		waitpid(pids[i], NULL, 0);
-		i++;
-	}
-	free(pids);
-	if (data->prev_pipe != -1)
-		close(data->prev_pipe);
+    i = 0;
+    while (i <= data->cmd_count)
+    {
+        // Only wait for valid pids (greater than 0)
+        if (pids[i] > 0)
+        {
+            waitpid(pids[i], &status, 0);
+        }
+        i++;
+    }
+    // Free the pids array after waiting
+    free(pids);
+    data->pids = NULL;
 }
 
 void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
