@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/18 14:06:05 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/22 15:03:32 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,24 @@ int	is_valid_echo_flag(const char *flag)
 	return (1);
 }
 
-void	ft_echo(char **cmd_args)
+void ft_echo(char **cmd_args)
 {
-	int	newline;
-	int	start;
-	int	i;
+	int newline;
+	int i;
 
 	newline = 1;
-	start = 1;
-	if (cmd_args[1] != NULL && cmd_args[1][0] == '-'
-		&& is_valid_echo_flag(cmd_args[1]))
+	i = 1;
+	// Check for -n flag(s)
+	while (cmd_args[i] && cmd_args[i][0] == '-' && is_valid_echo_flag(cmd_args[i]))
 	{
 		newline = 0;
-		start = 2;
+		i++;
 	}
-	i = start;
-	while (cmd_args[i] != NULL)
+	// Print arguments
+	while (cmd_args[i])
 	{
 		ft_printf("%s", cmd_args[i]);
-		if (cmd_args[i + 1] != NULL)
+		if (cmd_args[i + 1])
 			ft_printf(" ");
 		i++;
 	}
