@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/06 23:54:55 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/22 15:09:30 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ static char	*ft_skip_whitespace(char *ptr)
 	return (ptr);
 }
 
-static t_token	ft_parse_token(char **ptr)
+static t_token ft_parse_token(char **ptr, t_data *data)
 {
-	t_token	token;
+	t_token token;
 
 	*ptr = ft_skip_whitespace(*ptr);
 	if (**ptr == '|')
@@ -69,26 +69,62 @@ static t_token	ft_parse_token(char **ptr)
 	else
 	{
 		token.type = CMD;
-		token.value = ft_parse_word(ptr);
+		token.value = ft_parse_word(ptr, data);
 		if (ft_is_builtin(token.value))
 			token.type = BUILTIN;
 	}
-	return (token);
+	return token;
 }
 
-void	ft_tokenize_input(t_data *data)
+static int ft_is_quote_balanced(const char *str)
 {
-	t_token	token;
-	char	*ptr;
-	int		count;
+	int single_quotes = 0;
+	int double_quotes = 0;
+	int i = 0;
+
+	while (str[i])
+	{
+		if (str[i] == '\'' && !(double_quotes % 2))
+			single_quotes++;
+		else if (str[i] == '\"' && !(single_quotes % 2))
+			double_quotes++;
+		i++;
+	}
+
+	return ((single_quotes % 2 == 0) && (double_quotes % 2 == 0));
+}
+
+static int ft_handle_quotes_in_input(t_data *data)
+{
+	if (!ft_is_quote_balanced(data->input))
+	{
+		ft_putendl_fd("minishell: unclosed quotes detected", 2);
+		data->status = 1;
+		return (0);
+	}
+	return (1);
+}
+
+void ft_tokenize_input(t_data *data)
+{
+	t_token token;
+	char *ptr;
+	int count;
 
 	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
+
+	// Check for balanced quotes first
+	if (!ft_handle_quotes_in_input(data))
+		return;
+
 	ptr = data->input;
 	count = 0;
 	data->cmd_count = 0;
+
+	// Rest of your tokenization code
 	while (*ptr)
 	{
-		token = ft_parse_token(&ptr);
+		token = ft_parse_token(&ptr, data);
 		if (token.value && token.type != PIPE)
 		{
 			data->commands[data->cmd_count].tokens[count++] = token;
