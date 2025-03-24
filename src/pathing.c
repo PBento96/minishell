@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:24:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/21 21:20:28 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/22 14:32:14 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,17 @@ void	ft_getpath(t_data *data, int i)
 {
 	char	*path;
 	char	**dirs;
+	char	*cmd_value;
 
+	cmd_value = data->commands[i].tokens[0].value;
+	if (ft_strchr(cmd_value, '/'))
+	{
+		if (access(cmd_value, F_OK) == 0)
+			data->cmd_path = ft_strdup(cmd_value);
+		else
+			data->cmd_path = NULL;
+		return ;
+	}
 	path = ft_getenv("PATH", data->env);
 	if (!path)
 	{
@@ -64,12 +74,11 @@ void	ft_getpath(t_data *data, int i)
 		return ;
 	}
 	dirs = ft_split(path, ':');
-	ft_free((void **)&path);
 	if (!dirs)
 	{
 		data->cmd_path = NULL;
 		return ;
 	}
-	data->cmd_path = ft_findcmd(dirs, data->commands[i].tokens[0].value);
+	data->cmd_path = ft_findcmd(dirs, cmd_value);
 	ft_free((void **)&dirs);
 }

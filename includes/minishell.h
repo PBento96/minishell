@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/21 21:18:53 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/22 14:59:03 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,10 @@ typedef struct s_data
 	char		**env;
 	char		*input;
 	char		*cmd_path;
+	int			status;
 	int8_t		cmd_count;
 	int			prev_pipe;
+	int			piped;
 	int8_t		retval;
 	pid_t		*pids;
 }	t_data;
@@ -85,7 +87,7 @@ extern int	g_signal;
 
 // Parsing
 void	ft_tokenize_input(t_data *data);
-char	*ft_parse_word(char **ptr);
+char	*ft_parse_word(char **ptr, t_data *data);
 bool	ft_is_builtin(const char *command);
 char	**ft_tokens_to_args(t_token *tokens, int token_count);
 
@@ -106,6 +108,7 @@ void	ft_cd(t_data *data, char **cmd_args);
 
 // Pathing
 void	ft_getpath(t_data *data, int i);
+char	*ft_expand_variables(char *word, t_data *data);
 
 // Pipe
 void	ft_handle_pipes(t_data *data, int pipefd[2], int command);
