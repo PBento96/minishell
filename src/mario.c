@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	ft_wait_children(t_data *data, pid_t *pids)
+void ft_wait_children(t_data *data, pid_t *pids)
 {
     int	i;
     int	status;
