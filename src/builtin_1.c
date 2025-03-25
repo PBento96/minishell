@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/22 14:46:27 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/25 19:52:03 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	ft_exit(t_data *data, char **cmd_args)
 
 	if (neg)
 		exit_status = -exit_status;
-	exit((unsigned char)exit_status);
+	ft_shutdown(data, (unsigned char)exit_status);
 }
 
 // Helper function to print environment variables in sorted order

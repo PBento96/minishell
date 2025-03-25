@@ -6,12 +6,15 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/22 15:03:32 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/25 19:47:21 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/************************/
+/*Checks for the -n flag*/
+/************************/
 int	is_valid_echo_flag(const char *flag)
 {
 	const char	*ch = flag + 1;
@@ -25,6 +28,9 @@ int	is_valid_echo_flag(const char *flag)
 	return (1);
 }
 
+/**********************/
+/*Echo Builtin Command*/
+/**********************/
 void ft_echo(char **cmd_args)
 {
 	int newline;
@@ -32,13 +38,11 @@ void ft_echo(char **cmd_args)
 
 	newline = 1;
 	i = 1;
-	// Check for -n flag(s)
 	while (cmd_args[i] && cmd_args[i][0] == '-' && is_valid_echo_flag(cmd_args[i]))
 	{
 		newline = 0;
 		i++;
 	}
-	// Print arguments
 	while (cmd_args[i])
 	{
 		ft_printf("%s", cmd_args[i]);
@@ -50,6 +54,9 @@ void ft_echo(char **cmd_args)
 		ft_printf("\n");
 }
 
+/*********************/
+/*PWD Builtin Command*/
+/*********************/
 void	ft_pwd(t_data *data)
 {
 	ft_printf("%s\n", data->cwd);
@@ -67,6 +74,9 @@ void	ft_env(t_data *data)
 	}
 }
 
+/***********************************/
+/*Check and Execute Builtin Command*/
+/***********************************/
 void	ft_execute_builtin(t_data *data, char **cmd_args)
 {
 	char	*cmd;

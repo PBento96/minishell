@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/21 20:48:39 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/24 11:19:24 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,11 @@ void	ft_execute(t_data *data)
 	char	**cmd_args;
 
 	cmd_index = -1;
-	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
+	data->pids = malloc((data->cmd_count) * sizeof(pid_t));
 	if (!data->pids)
-		return ;
+		return;
 	data->prev_pipe = -1;
-	while (++cmd_index <= data->cmd_count && !g_signal)
+	while (++cmd_index < data->cmd_count + 1 && !g_signal)
 	{
 		ft_prepare_command(data, cmd_index, &cmd_args);
 		if(data->cmd_count == 0 &&
@@ -92,7 +92,7 @@ void	ft_execute(t_data *data)
 		{
 			ft_create_child_process(data, pipefd, cmd_index, cmd_args);
 			if (data->pids[cmd_index] > 0)
-			ft_handle_parent(data, pipefd, cmd_index);
+				ft_handle_parent(data, pipefd, cmd_index);
 		}
 		ft_free_cmd(data, cmd_args);
 	}
