@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/24 11:19:24 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/26 17:45:10 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,23 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 		ft_execute_builtin(data, cmd_args);
 	else
 	{
+		if (data->cmd_path == NULL)
+			{
+				ft_printf(C_RED"%s: Command not found\n"RESET_ALL, cmd_args[0]);
+				ft_free_array((void **)cmd_args);
+				exit(EXIT_FAILURE);
+			}
 		printf("Executing command: %s\n", data->cmd_path);
-		execve(data->cmd_path, cmd_args, data->env);
-		perror("execve");
+		if (execve(data->cmd_path, cmd_args, data->env))
+		{
+			perror("execve");
+			ft_free((void **)&data->cmd_path);
+			ft_free_array((void **)cmd_args);
+		}
 	}
 	ft_free((void **)&data->cmd_path);
-	ft_free_array((void **)cmd_args);
-	exit(EXIT_FAILURE);
+    ft_free_array((void **)cmd_args);
+    exit(EXIT_FAILURE);
 }
 
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
@@ -75,7 +85,7 @@ void	ft_execute(t_data *data)
 	char	**cmd_args;
 
 	cmd_index = -1;
-	data->pids = malloc((data->cmd_count) * sizeof(pid_t));
+	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
 	if (!data->pids)
 		return;
 	data->prev_pipe = -1;
@@ -85,6 +95,7 @@ void	ft_execute(t_data *data)
 		if(data->cmd_count == 0 &&
 			data->commands[cmd_index].tokens->type == BUILTIN)
 		{
+			data->pids[cmd_index] = -1;
 			write(1,"Executing Lone Builtin\n", 23);
 			ft_execute_builtin(data, cmd_args);
 		}
