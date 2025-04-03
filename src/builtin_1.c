@@ -6,269 +6,350 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/25 19:52:03 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/26 18:05:26 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_exit(t_data *data, char **cmd_args)
+static int	is_numeric_arg(char *arg, int *exit_value)
 {
-	int		exit_status;
-	int		i;
-	int		neg;
+	int	i;
+	int	neg;
 
-	write(1, "exit\n", 5);
-	if (!cmd_args[1])
-		exit(data->status);
-
-	// Check if argument is numeric
 	i = 0;
 	neg = 0;
-	if (cmd_args[1][i] == '-' || cmd_args[1][i] == '+')
+	if (arg[i] == '-' || arg[i] == '+')
 	{
-		if (cmd_args[1][i] == '-')
+		if (arg[i] == '-')
 			neg = 1;
 		i++;
 	}
-	exit_status = 0;
-	while (cmd_args[1][i])
+	*exit_value = 0;
+	while (arg[i])
 	{
-		if (cmd_args[1][i] < '0' || cmd_args[1][i] > '9')
-		{
-			write(2, "minishell: exit: ", 17);
-			write(2, cmd_args[1], ft_strlen(cmd_args[1]));
-			write(2, ": numeric argument required\n", 28);
-			exit(2);
-		}
-		exit_status = exit_status * 10 + (cmd_args[1][i] - '0');
+		if (arg[i] < '0' || arg[i] > '9')
+			return (0);
+		*exit_value = *exit_value * 10 + (arg[i] - '0');
 		i++;
 	}
+	if (neg)
+		*exit_value = -*exit_value;
+	return (1);
+}
 
+static void	handle_exit_error(char *arg)
+{
+	write(2, "minishell: exit: ", 17);
+	write(2, arg, ft_strlen(arg));
+	write(2, ": numeric argument required\n", 28);
+	exit(2);
+}
+
+void	ft_exit(t_data *data, char **cmd_args)
+{
+	int	exit_status;
+
+	write(1, "exit\n", 5);
+	exit_status = 0;
+	if (!cmd_args[1])
+		ft_shutdown(&data, (unsigned char)exit_status);
+	if (!is_numeric_arg(cmd_args[1], &exit_status))
+		handle_exit_error(cmd_args[1]);
 	if (cmd_args[2])
 	{
 		write(2, "minishell: exit: too many arguments\n", 36);
 		data->status = 1;
-		return;
+		return ;
 	}
-
-	if (neg)
-		exit_status = -exit_status;
-	ft_shutdown(data, (unsigned char)exit_status);
+	if (data->piped == 0)
+		ft_shutdown(&data, (unsigned char)exit_status);
 }
 
-// Helper function to print environment variables in sorted order
-static void	ft_print_sorted_env(char **env)
+static void	swap_strings(char **a, char **b)
 {
-	int		i;
-	int		j;
-	int		count;
 	char	*temp;
-	char	**sorted_env;
 
-	// Count environment variables
+	temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+static char	**dup_env_array(char **env)
+{
+	int		count;
+	char	**dup;
+	int		i;
+
 	count = 0;
 	while (env[count])
 		count++;
-
-	// Create a copy of the environment
-	sorted_env = malloc(sizeof(char *) * (count + 1));
-	if (!sorted_env)
-		return;
-
-	for (i = 0; i < count; i++)
-		sorted_env[i] = ft_strdup(env[i]);
-	sorted_env[count] = NULL;
-
-	// Sort the environment (bubble sort)
-	for (i = 0; i < count - 1; i++)
+	dup = malloc(sizeof(char *) * (count + 1));
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (i < count)
 	{
-		for (j = 0; j < count - i - 1; j++)
+		dup[i] = ft_strdup(env[i]);
+		if (!dup[i])
 		{
-			if (ft_strncmp(sorted_env[j], sorted_env[j + 1], ft_strlen(sorted_env[j])) > 0)
-			{
-				temp = sorted_env[j];
-				sorted_env[j] = sorted_env[j + 1];
-				sorted_env[j + 1] = temp;
-			}
+			while (--i >= 0)
+				free(dup[i]);
+			free(dup);
+			return (NULL);
 		}
+		i++;
 	}
+	dup[count] = NULL;
+	return (dup);
+}
 
-	// Print the sorted environment with "declare -x" prefix
-	for (i = 0; i < count; i++)
+static void	sort_env_array(char **env)
+{
+	int	i;
+	int	j;
+	int	size;
+
+	size = 0;
+	while (env[size])
+		size++;
+	i = 0;
+	while (i < size - 1)
 	{
-		char *equal_sign = ft_strchr(sorted_env[i], '=');
+		j = 0;
+		while (j < size - i - 1)
+		{
+			if (ft_strncmp(env[j], env[j + 1], size) > 0)
+				swap_strings(&env[j], &env[j + 1]);
+			j++;
+		}
+		i++;
+	}
+}
+
+static void	print_env_with_declare(char **env)
+{
+	int		i;
+	char	*equal_sign;
+
+	i = 0;
+	while (env[i])
+	{
+		write(1, "declare -x ", 11);
+		equal_sign = ft_strchr(env[i], '=');
 		if (equal_sign)
 		{
-			*equal_sign = '\0';
-			ft_printf("declare -x %s=\"%s\"\n", sorted_env[i], equal_sign + 1);
+			write(1, env[i], equal_sign - env[i] + 1);
+			write(1, "\"", 1);
+			write(1, equal_sign + 1, ft_strlen(equal_sign + 1));
+			write(1, "\"", 1);
 		}
 		else
-		{
-			ft_printf("declare -x %s\n", sorted_env[i]);
-		}
+			write(1, env[i], ft_strlen(env[i]));
+		write(1, "\n", 1);
+		i++;
 	}
+}
 
-	// Free the sorted environment
-	for (i = 0; i < count; i++)
-		free(sorted_env[i]);
-	free(sorted_env);
+static void	free_env_array(char **env)
+{
+	int	i;
+
+	if (!env)
+		return ;
+	i = 0;
+	while (env[i])
+	{
+		free(env[i]);
+		i++;
+	}
+	free(env);
+}
+
+void	ft_print_sorted_env(char **env)
+{
+	char	**sorted_env;
+
+	sorted_env = dup_env_array(env);
+	if (!sorted_env)
+		return ;
+	sort_env_array(sorted_env);
+	print_env_with_declare(sorted_env);
+	free_env_array(sorted_env);
+}
+
+static void	add_env_variable(t_data *data, char *var, int count)
+{
+	char	**new_env;
+	int		i;
+
+	new_env = malloc(sizeof(char *) * (count + 2));
+	if (!new_env)
+		return ;
+	i = 0;
+	while (i < count)
+	{
+		new_env[i] = data->env[i];
+		i++;
+	}
+	new_env[count] = ft_strdup(var);
+	new_env[count + 1] = NULL;
+	free(data->env);
+	data->env = new_env;
+}
+
+static int	update_existing_var(t_data *data, char *var, char *equal_sign)
+{
+	int		j;
+	int		var_len;
+	int		found;
+
+	j = 0;
+	found = 0;
+	var_len = equal_sign - var;
+	while (data->env[j])
+	{
+		if (ft_strncmp(data->env[j], var, var_len) == 0
+			&& data->env[j][var_len] == '=')
+		{
+			free(data->env[j]);
+			data->env[j] = ft_strdup(var);
+			found = 1;
+			break ;
+		}
+		j++;
+	}
+	return (found);
+}
+
+static void	process_var_with_equal(t_data *data, char *var)
+{
+	char	*equal_sign;
+	int		j;
+	int		found;
+
+	equal_sign = ft_strchr(var, '=');
+	*equal_sign = '\0';
+	found = update_existing_var(data, var, equal_sign);
+	*equal_sign = '=';
+	if (!found)
+	{
+		j = 0;
+		while (data->env[j])
+			j++;
+		add_env_variable(data, var, j);
+	}
+}
+
+static int	var_exists(char **env, char *var)
+{
+	int	i;
+	int	var_len;
+
+	i = 0;
+	var_len = ft_strlen(var);
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], var, var_len) == 0 &&
+			(env[i][var_len] == '=' || env[i][var_len] == '\0'))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+static void	process_var_no_equal(t_data *data, char *var)
+{
+	int		count;
+
+	if (var_exists(data->env, var))
+		return ;
+	count = 0;
+	while (data->env[count])
+		count++;
+	add_env_variable(data, var, count);
 }
 
 void	ft_export(t_data *data, char **cmd_args)
 {
 	int		i;
-	int		k;
-	int		j;
-	int		found;
-	int		var_len;
 	char	*equal_sign;
-	char	**new_env;
 
 	if (!cmd_args[1])
 	{
-		// If no arguments, print all environment variables in sorted order
 		ft_print_sorted_env(data->env);
-		return;
+		return ;
 	}
 	i = 1;
-	var_len = 0;
 	while (cmd_args[i])
 	{
 		equal_sign = ft_strchr(cmd_args[i], '=');
 		if (equal_sign)
-		{
-			*equal_sign = '\0'; // Temporarily split the string at '='
-			found = 0;
-			j = 0;
-			while (data->env[j])
-			{
-				if (ft_strncmp(data->env[j], cmd_args[i], ft_strlen(cmd_args[i])) == 0
-					&& data->env[j][ft_strlen(cmd_args[i])] == '=')
-				{
-					// Variable already exists, update it
-					free(data->env[j]);
-					*equal_sign = '='; // Restore the '=' character
-					data->env[j] = ft_strdup(cmd_args[i]);
-					found = 1;
-					break;
-				}
-				j++;
-			}
-
-			if (!found)
-			{
-				// Variable doesn't exist, add it
-				*equal_sign = '='; // Restore the '=' character
-				new_env = malloc(sizeof(char *) * (j + 2));
-				if (!new_env)
-					return;
-
-				for (int k = 0; k < j; k++)
-					new_env[k] = data->env[k];
-
-				new_env[j] = ft_strdup(cmd_args[i]);
-				new_env[j + 1] = NULL;
-
-				free(data->env);
-				data->env = new_env;
-			}
-		}
+			process_var_with_equal(data, cmd_args[i]);
 		else
-		{
-			// No '=' in the argument, just declare without setting a value
-			// Check if the variable is already in the environment
-			found = 0;
-			j = 0;
-			while (data->env[j])
-			{
-				var_len = ft_strlen(cmd_args[i]);
-				if (ft_strncmp(data->env[j], cmd_args[i], var_len) == 0 &&
-					(data->env[j][var_len] == '=' || data->env[j][var_len] == '\0'))
-				{
-					found = 1;
-					break;
-				}
-				j++;
-			}
-			// If not found, add it to the environment
-			if (!found)
-			{
-				// Count environment variables
-				k = 0;
-				while (data->env[k])
-					k++;
-
-				// Create new environment with the variable
-				new_env = malloc(sizeof(char *) * (k + 2));
-				if (!new_env)
-					return;
-
-				for (int m = 0; m < k; m++)
-					new_env[m] = data->env[m];
-
-				new_env[k] = ft_strdup(cmd_args[i]);
-				new_env[k + 1] = NULL;
-
-				free(data->env);
-				data->env = new_env;
-			}
-		}
+			process_var_no_equal(data, cmd_args[i]);
 		i++;
 	}
+}
+
+static void	remove_env_var(t_data *data, int j)
+{
+	int		k;
+	int		m;
+	char	**new_env;
+
+	k = 0;
+	while (data->env[k])
+		k++;
+	new_env = malloc(sizeof(char *) * k);
+	if (!new_env)
+		return ;
+	k = 0;
+	m = 0;
+	while (data->env[m])
+	{
+		if (m != j)
+			new_env[k++] = ft_strdup(data->env[m]);
+		m++;
+	}
+	new_env[k] = NULL;
+	m = 0;
+	while (data->env[m])
+		free(data->env[m++]);
+	free(data->env);
+	data->env = new_env;
+}
+
+static int	is_matching_var(char *env_var, char *arg)
+{
+	int	var_len;
+
+	var_len = 0;
+	while (arg[var_len] && arg[var_len] != '=')
+		var_len++;
+	if (ft_strncmp(env_var, arg, var_len) == 0 &&
+		(env_var[var_len] == '=' || env_var[var_len] == '\0'))
+		return (1);
+	return (0);
 }
 
 void	ft_unset(t_data *data, char **cmd_args)
 {
 	int	i;
 	int	j;
-	int	k;
-	int	var_len;
-	char	**new_env;
 
 	if (!cmd_args[1])
-		return;
-
+		return ;
 	i = 1;
 	while (cmd_args[i])
 	{
 		j = 0;
 		while (data->env[j])
 		{
-			var_len = 0;
-			while (cmd_args[i][var_len] && cmd_args[i][var_len] != '=')
-				var_len++;
-
-			if (ft_strncmp(data->env[j], cmd_args[i], var_len) == 0 &&
-				(data->env[j][var_len] == '=' || data->env[j][var_len] == '\0'))
+			if (is_matching_var(data->env[j], cmd_args[i]))
 			{
-				// Count environment variables
-				k = 0;
-				while (data->env[k])
-					k++;
-
-				// Create new environment without the variable
-				new_env = malloc(sizeof(char *) * k);
-				if (!new_env)
-					return;
-
-				// Copy all variables except the one to be removed
-				k = 0;
-				for (int m = 0; data->env[m]; m++)
-				{
-					if (m != j)
-						new_env[k++] = ft_strdup(data->env[m]);
-				}
-				new_env[k] = NULL;
-
-				// Free the old environment
-				for (int m = 0; data->env[m]; m++)
-					free(data->env[m]);
-				free(data->env);
-
-				// Set the new environment
-				data->env = new_env;
-				break;
+				remove_env_var(data, j);
+				break ;
 			}
 			j++;
 		}
@@ -309,6 +390,7 @@ void	ft_set_data_env(t_data *data, char *OLDPWD)
 void	ft_cd(t_data *data, char **cmd_args)
 {
 	char OLDPWD[MAX_CWD_SIZE];
+	char *OLDPWD_cp;
 	char *path;
 
 	if (!cmd_args[1])
@@ -329,5 +411,6 @@ void	ft_cd(t_data *data, char **cmd_args)
 		return;
 	}
 	getcwd(data->cwd, sizeof(data->cwd));
-	ft_set_data_env(data, OLDPWD);
+	OLDPWD_cp = ft_strdup(OLDPWD);
+	ft_set_data_env(data, OLDPWD_cp);
 }

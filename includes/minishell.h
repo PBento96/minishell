@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/24 11:28:03 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/25 19:55:47 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char	**ft_tokens_to_args(t_token *tokens, int token_count);
 
 // Memory
 int		ft_initilaize(t_data **data, char **env);
-void	ft_shutdown(t_data *data, int retval);
+void	ft_shutdown(t_data **data, int retval);
 
 // Execution
 void	ft_execute(t_data *data);

@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/24 11:01:38 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/03/26 17:34:14 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 void ft_wait_children(t_data *data, pid_t *pids)
 {
-    int	i;
-    int	status;
+	int	i;
+	int	status;
 
-    i = 0;
-    if (pids)
-    {
-        while (i <= data->cmd_count)
-        {
-            if (pids[i] > 0)  // Only wait for valid PIDs
-                waitpid(pids[i], &status, 0);
-            i++;
-        }
-        free(pids);
-    }
-    if (data->prev_pipe != -1)
-        close(data->prev_pipe);
+	i = 0;
+	if (pids)
+	{
+		while (i <= data->cmd_count)
+		{
+			if (pids[i] > 0)  // Only wait for valid PIDs
+				waitpid(pids[i], &status, 0);
+			i++;
+		}
+		free(pids);
+	}
+	if (data->prev_pipe != -1)
+		close(data->prev_pipe);
 }
 
 void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
