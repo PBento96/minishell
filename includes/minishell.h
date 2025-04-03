@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/25 19:55:47 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:51:49 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,13 @@ char	*ft_getenv(const char *name, char **env);
 // Builtin
 void	ft_execute_builtin(t_data *data, char **cmd_args);
 void	ft_exit(t_data *data, char **cmd_args);
+void	ft_print_sorted_env(char **env);
 void	ft_export(t_data *data, char **cmd_args);
 void	ft_unset(t_data *data, char **cmd_args);
 void	ft_cd(t_data *data, char **cmd_args);
+void	ft_echo(char **cmd_args);
+void	ft_pwd(t_data *data);
+void	ft_env(t_data *data);
 
 // Pathing
 void	ft_getpath(t_data *data, int i);

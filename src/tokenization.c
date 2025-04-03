@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/22 15:09:30 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:56:28 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,16 +112,11 @@ void ft_tokenize_input(t_data *data)
 	int count;
 
 	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
-
-	// Check for balanced quotes first
 	if (!ft_handle_quotes_in_input(data))
 		return;
-
 	ptr = data->input;
 	count = 0;
 	data->cmd_count = 0;
-
-	// Rest of your tokenization code
 	while (*ptr)
 	{
 		token = ft_parse_token(&ptr, data);

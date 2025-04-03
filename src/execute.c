@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/26 17:45:10 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:42:20 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 		}
 	}
 	ft_free((void **)&data->cmd_path);
-    ft_free_array((void **)cmd_args);
-    exit(EXIT_FAILURE);
+	ft_free_array((void **)cmd_args);
+	exit(EXIT_FAILURE);
 }
 
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
