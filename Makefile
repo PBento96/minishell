@@ -5,8 +5,8 @@ NAME	=	minishell
 include	./includes/make/vars.mk
 
 ##	C FILES
-SRC_FILES	=	main.c startup.c parser.c tokenization.c shutdown.c execute.c pathing.c mario.c
 BUILTIN_FILES =	builtins/cd.c builtins/echo.c builtins/env.c builtins/export.c builtins/export_print.c builtins/pwd.c builtins/unset.c builtins/exit.c builtins/builtin.c
+SRC_FILES	=	main.c startup.c parser.c tokenization.c shutdown.c execute.c pathing.c mario.c files.c
 SRC			=	${addprefix ./src/, ${SRC_FILES} ${BUILTIN_FILES}}
 OBJ			=	${SRC:.c=.o}
 
