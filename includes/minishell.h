@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/25 19:55:47 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/04 09:53:17 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,16 @@ typedef enum e_token_type
 	REDIR_APPEND
 }	t_token_type;
 
+typedef struct s_redir
+{
+	char	*in_file;
+	char	*out_file;
+	char	*delimiter;
+	int		in_fd;
+	int		out_fd;
+	bool	append;
+}	t_redir;
+
 typedef struct s_token
 {
 	t_token_type	type;
@@ -85,39 +95,43 @@ typedef struct s_data
 
 extern int	g_signal;
 
-// Parsing
+//	Parsing
 void	ft_tokenize_input(t_data *data);
 char	*ft_parse_word(char **ptr, t_data *data);
 bool	ft_is_builtin(const char *command);
 char	**ft_tokens_to_args(t_token *tokens, int token_count);
 
-// Memory
+//	Memory
 int		ft_initilaize(t_data **data, char **env);
 void	ft_shutdown(t_data **data, int retval);
 
-// Execution
+//	Execution
 void	ft_execute(t_data *data);
 char	*ft_getenv(const char *name, char **env);
 
-// Builtin
+//	Builtin
 void	ft_execute_builtin(t_data *data, char **cmd_args);
 void	ft_exit(t_data *data, char **cmd_args);
 void	ft_export(t_data *data, char **cmd_args);
 void	ft_unset(t_data *data, char **cmd_args);
 void	ft_cd(t_data *data, char **cmd_args);
 
-// Pathing
+//	Pathing
 void	ft_getpath(t_data *data, int i);
 char	*ft_expand_variables(char *word, t_data *data);
 
-// Pipe
+//	Pipe
 void	ft_handle_pipes(t_data *data, int pipefd[2], int command);
 void	ft_wait_children(t_data *data, pid_t *pids);
 void	ft_pipe_error(t_data *data, char	**cmd_args);
 
-// Error handling
+//	Error handling
 void	ft_setup_pipes(int pipefd[2]);
 void	ft_pipe_error(t_data *data, char	**cmd_args);
 void	ft_free_cmd(t_data *data, char	**cmd_args);
+
+//	FD handling
+void	ft_open_redirect_fds(t_redir *redir);
+void	ft_close_redirect_fds(t_redir *redir);
 
 #endif
