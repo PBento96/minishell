@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/03 20:56:28 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:06:22 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,18 @@ static t_token	ft_parse_redirection(char **ptr)
 	}
 	else if (**ptr == '<')
 	{
-		token.type = REDIR_IN;
-		token.value = ft_strdup("<");
-		(*ptr)++;
+		if (*(*ptr + 1) == '<')
+		{
+			token.type = REDIR_DELIM;
+			token.value = ft_strdup("<<");
+			(*ptr) += 2;
+		}
+		else
+		{
+			token.type = REDIR_IN;
+			token.value = ft_strdup("<");
+			(*ptr)++;
+		}
 	}
 	return (token);
 }

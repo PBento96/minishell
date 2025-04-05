@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/05 12:30:03 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:52:17 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ typedef struct s_token
 
 typedef struct s_command
 {
+	t_redir	redir;
 	t_token	tokens[MAX_TOKENS];
 	int		token_count;
 }	t_command;
