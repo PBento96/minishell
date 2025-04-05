@@ -6,30 +6,11 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/22 15:13:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:08:30 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// // Update the definition in parser.c to match the new signature
-// char *ft_parse_word(char **ptr, t_data *data)
-// {
-//     char *start;
-//     char *word;
-//     char *expanded_word;
-
-//     start = *ptr;
-//     while (**ptr && !ft_isspace(**ptr) && **ptr != OP_PIPE
-//         && **ptr != OP_REDIRECT_OUT && **ptr != OP_REDIRECT_IN)
-//         (*ptr)++;
-
-//     word = ft_substr(start, 0, *ptr - start);
-//     expanded_word = ft_expand_variables(word, data);
-//     free(word);
-
-//     return expanded_word;
-// }
 
 char *ft_remove_quotes(char *str)
 {
@@ -71,7 +52,6 @@ char *ft_remove_quotes(char *str)
 		i++;
 	}
 	result[j] = '\0';
-
 	return result;
 }
 
@@ -86,7 +66,18 @@ char	**ft_tokens_to_args(t_token *tokens, int token_count)
 	i = 0;
 	while (i < token_count)
 	{
-		args[i] = ft_strdup(tokens[i].value);
+		if (tokens[i].type != REDIR_APPEND && tokens[i].type != REDIR_DELIM
+				&& tokens[i].type != REDIR_IN && tokens[i].type != REDIR_OUT)
+		{
+			args[i] = ft_strdup(tokens[i].value);
+			if (!args[i])
+			{
+				while (--i >= 0)
+					free(args[i]);
+				free(args);
+				return (NULL);
+			}
+		}
 		i++;
 	}
 	args[i] = NULL;
@@ -94,15 +85,20 @@ char	**ft_tokens_to_args(t_token *tokens, int token_count)
 }
 
 // Add this function to handle variable expansion
-char *ft_expand_variables(char *word, t_data *data)
+char	*ft_expand_variables(char *word, t_data *data)
 {
-	char *result = ft_strdup("");
+	char *result;
 	char *var_name;
 	char *var_value;
-	int i = 0;
-	int in_single_quotes = 0;
-	int in_double_quotes = 0;
+	int i;
+	int in_single_quotes;
+	int in_double_quotes;
 
+
+	result = ft_strdup("");
+	in_single_quotes = 0;
+	in_double_quotes = 0;
+	i = 0;
 	while (word[i])
 	{
 		// Handle quotes
@@ -237,7 +233,6 @@ char *ft_parse_word(char **ptr, t_data *data)
 			(*ptr)++;
 			continue;
 		}
-
 		// End word at unquoted spaces or operators
 		if (!in_quotes && (ft_isspace(**ptr) || **ptr == '|' ||
 			**ptr == '>' || **ptr == '<'))
@@ -245,11 +240,9 @@ char *ft_parse_word(char **ptr, t_data *data)
 
 		(*ptr)++;
 	}
-
 	word = ft_substr(start, 0, *ptr - start);
 	expanded_word = ft_expand_variables(word, data);
 	free(word);
-
 	// Remove quotes after expansion
 	final_word = ft_remove_quotes(expanded_word);
 	free(expanded_word);

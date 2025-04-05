@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/03 20:42:20 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:33:36 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 	i = 0;
 	while (cmd_args[i] != NULL)
 	{
-		printf("arg[%d]: %s\n", i, cmd_args[i]);
+		printf("arg[%d]: %s Type: %d\n", i, cmd_args[i], type);
 		i++;
 	}
 	if (type == BUILTIN)
