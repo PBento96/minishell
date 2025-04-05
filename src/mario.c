@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/26 17:34:14 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:44:30 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void ft_wait_children(t_data *data, pid_t *pids)
 	{
 		while (i <= data->cmd_count)
 		{
-			if (pids[i] > 0)  // Only wait for valid PIDs
+			if (pids[i] > 0)
 				waitpid(pids[i], &status, 0);
 			i++;
 		}

@@ -113,9 +113,13 @@ char	*ft_getenv(const char *name, char **env);
 //	Builtin
 void	ft_execute_builtin(t_data *data, char **cmd_args);
 void	ft_exit(t_data *data, char **cmd_args);
+void	ft_print_sorted_env(char **env);
 void	ft_export(t_data *data, char **cmd_args);
 void	ft_unset(t_data *data, char **cmd_args);
 void	ft_cd(t_data *data, char **cmd_args);
+void	ft_echo(char **cmd_args);
+void	ft_pwd(t_data *data);
+void	ft_env(t_data *data);
 
 //	Pathing
 void	ft_getpath(t_data *data, int i);
