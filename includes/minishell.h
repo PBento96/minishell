@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/05 12:52:17 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:28:30 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ typedef enum e_token_type
 
 typedef struct s_redir
 {
-	char	*in_file;
-	char	*out_file;
 	char	*delimiter;
 	int		in_fd;
 	int		out_fd;
@@ -137,7 +135,7 @@ void	ft_pipe_error(t_data *data, char	**cmd_args);
 void	ft_free_cmd(t_data *data, char	**cmd_args);
 
 //	FD handling
-void	ft_open_redirect_fds(t_redir *redir);
+void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out);
 void	ft_close_redirect_fds(t_redir *redir);
 
 #endif
