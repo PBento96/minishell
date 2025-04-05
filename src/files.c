@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:57:22 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/05 13:26:05 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:52:22 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out)
 {
-	if (redir->in_fd >= 0)
+	if (redir->in_fd > 2)
         close(redir->in_fd);
-    if (redir->out_fd >= 0)
+    if (redir->out_fd > 2)
         close(redir->out_fd);
 	if (in && *in)
 	{
@@ -28,13 +28,14 @@ void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out)
 			redir->out_fd = open(out, O_CREAT | O_APPEND | O_WRONLY, 0664);
 		else
 			redir->out_fd = open(out, O_CREAT | O_TRUNC | O_WRONLY, 0664);
+		redir->append = false;
 	}
 }
 
 void	ft_close_redirect_fds(t_redir *redir)
 {
-	if (redir->in_fd >= 0)
+	if (redir->in_fd < 0)
 		close(redir->in_fd);
-	if (redir->out_fd >= 0)
+	if (redir->out_fd < 0)
 		close(redir->out_fd);
 }
