@@ -6,7 +6,7 @@
 /*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/04 09:53:17 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:30:03 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef enum e_token_type
 	PIPE,
 	REDIR_IN,
 	REDIR_OUT,
+	REDIR_DELIM,
 	REDIR_APPEND
 }	t_token_type;
 
