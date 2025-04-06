@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/05 14:25:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/06 11:57:49 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,24 +28,60 @@ void ft_wait_children(t_data *data, pid_t *pids)
 		}
 		free(pids);
 	}
-	if (data->prev_pipe != -1)
-		close(data->prev_pipe);
 }
 
-void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
+void ft_handle_pipes(t_data *data, int pipefd[2], int command)
 {
+	// If this command has input from a previous pipe
 	if (data->prev_pipe != -1)
 	{
-		dup2(data->prev_pipe, data->commands[command - 1].redir.in_fd);
+		// Only redirect if no file redirection has been set up
+		if (data->commands[command].redir.in_fd == 0)
+			dup2(data->prev_pipe, STDIN_FILENO);
+		else {
+			// We have a file redirection, apply it
+			dup2(data->commands[command].redir.in_fd, STDIN_FILENO);
+			// Close it after duplicating
+			close(data->commands[command].redir.in_fd);
+		}
+
 		close(data->prev_pipe);
 	}
+	else if (data->commands[command].redir.in_fd > 0)
+	{
+		// No pipe but we have a file redirection
+		dup2(data->commands[command].redir.in_fd, STDIN_FILENO);
+		// Close it after duplicating
+		close(data->commands[command].redir.in_fd);
+	}
+
 	if (command < data->cmd_count)
 	{
-		dup2(pipefd[1], data->commands[command - 1].redir.out_fd);
+		// Only redirect output to pipe if no file redirection exists
+		if (data->commands[command].redir.out_fd == 1)
+			dup2(pipefd[1], STDOUT_FILENO);
+		else {
+			// We have a file redirection, apply it
+			dup2(data->commands[command].redir.out_fd, STDOUT_FILENO);
+			// Close it after duplicating
+			close(data->commands[command].redir.out_fd);
+			data->commands[command].redir.out_fd = 1;
+		}
+
 		close(pipefd[1]);
+		data->prev_pipe = pipefd[0];
 	}
-	if (command < data->cmd_count)
+	else
+	{
 		close(pipefd[0]);
+		// Apply any output redirection for the last command
+		if (data->commands[command].redir.out_fd > 1) {
+			dup2(data->commands[command].redir.out_fd, STDOUT_FILENO);
+			// Close it after duplicating
+			close(data->commands[command].redir.out_fd);
+			data->commands[command].redir.out_fd = 1;
+		}
+	}
 }
 
 void	ft_setup_pipes(int pipefd[2])

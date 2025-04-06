@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:57:22 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/05 14:06:44 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/06 11:42:02 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out)
 {
-	if (redir->in_fd > 2)
+	if (redir->in_fd > 0)
 		close(redir->in_fd);
-	if (redir->out_fd > 2)
+	if (redir->out_fd > 1)
 		close(redir->out_fd);
 	if (in && *in)
 	{
@@ -34,8 +34,12 @@ void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out)
 
 void	ft_close_redirect_fds(t_redir *redir)
 {
-	if (redir->in_fd < 0)
+	if (redir->in_fd > 0)
 		close(redir->in_fd);
-	if (redir->out_fd < 0)
+	if (redir->out_fd > 1)
 		close(redir->out_fd);
+
+	// Reset the file descriptors to their default values
+	redir->in_fd = 0;  // STDIN
+	redir->out_fd = 1; // STDOUT
 }

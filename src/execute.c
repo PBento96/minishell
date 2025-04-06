@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/06 10:37:53 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/06 12:10:12 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 {
 	*cmd_args = ft_tokens_to_args(&data->commands[cmd_index]);
-	ft_getpath(data, cmd_index);
+	ft_getpath(data, *cmd_args[0]);
 }
 
 static void	ft_create_child_process(t_data *data, int pipefd[2],
@@ -127,6 +127,15 @@ void	ft_execute(t_data *data)
 		}
 		else
 		{
+			if (cmd_index > 0 &&
+				data->commands[cmd_index-1].redir.out_fd != STDOUT_FILENO &&
+				data->commands[cmd_index].redir.in_fd != STDIN_FILENO)
+			{
+				// Wait for previous command to finish if it's writing to a file
+				// that this command needs to read from
+				if (data->pids[cmd_index-1] > 0)
+					waitpid(data->pids[cmd_index-1], NULL, 0);
+			}
 			ft_create_child_process(data, pipefd, cmd_index, cmd_args);
 			if (data->pids[cmd_index] > 0)
 				ft_handle_parent(data, pipefd, cmd_index);
@@ -134,4 +143,8 @@ void	ft_execute(t_data *data)
 		ft_free_cmd(data, cmd_args);
 	}
 	ft_wait_children(data, data->pids);
+	// Close any remaining redirect file descriptors
+	for (int i = 0; i <= data->cmd_count; i++) {
+		ft_close_redirect_fds(&data->commands[i].redir);
+	}
 }
