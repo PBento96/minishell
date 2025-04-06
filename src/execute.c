@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/05 12:33:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/06 10:37:53 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 {
-	*cmd_args = ft_tokens_to_args(data->commands[cmd_index].tokens,
-			data->commands[cmd_index].token_count);
+	*cmd_args = ft_tokens_to_args(&data->commands[cmd_index]);
 	ft_getpath(data, cmd_index);
 }
 
@@ -63,6 +62,16 @@ static void	ft_create_child_process(t_data *data, int pipefd[2],
 	else if (data->pids[cmd_index] == 0)
 	{
 		ft_handle_pipes(data, pipefd, cmd_index);
+		if (data->commands[cmd_index].redir.in_fd != STDIN_FILENO)
+		{
+			dup2(data->commands[cmd_index].redir.in_fd, STDIN_FILENO);
+			close(data->commands[cmd_index].redir.in_fd);
+		}
+		if (data->commands[cmd_index].redir.out_fd != STDOUT_FILENO)
+		{
+			dup2(data->commands[cmd_index].redir.out_fd, STDOUT_FILENO);
+			close(data->commands[cmd_index].redir.out_fd);
+		}
 		ft_execute_command(data, cmd_args,
 			data->commands[cmd_index].tokens->type);
 	}
@@ -95,9 +104,26 @@ void	ft_execute(t_data *data)
 		if(data->cmd_count == 0 &&
 			data->commands[cmd_index].tokens->type == BUILTIN)
 		{
+			int original_stdin = dup(STDIN_FILENO);
+			int original_stdout = dup(STDOUT_FILENO);
+
+			if (data->commands[cmd_index].redir.in_fd != STDIN_FILENO)
+			{
+				dup2(data->commands[cmd_index].redir.in_fd, STDIN_FILENO);
+				close(data->commands[cmd_index].redir.in_fd);
+			}
+			if (data->commands[cmd_index].redir.out_fd != STDOUT_FILENO)
+			{
+				dup2(data->commands[cmd_index].redir.out_fd, STDOUT_FILENO);
+				close(data->commands[cmd_index].redir.out_fd);
+			}
 			data->pids[cmd_index] = -1;
 			write(1,"Executing Lone Builtin\n", 23);
 			ft_execute_builtin(data, cmd_args);
+			dup2(original_stdin, STDIN_FILENO);
+			dup2(original_stdout, STDOUT_FILENO);
+			close(original_stdin);
+			close(original_stdout);
 		}
 		else
 		{

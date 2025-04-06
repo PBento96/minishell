@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/05 13:28:30 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:06:21 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ extern int	g_signal;
 void	ft_tokenize_input(t_data *data);
 char	*ft_parse_word(char **ptr, t_data *data);
 bool	ft_is_builtin(const char *command);
-char	**ft_tokens_to_args(t_token *tokens, int token_count);
+char	**ft_tokens_to_args(t_command *command);
 
 //	Memory
 int		ft_initilaize(t_data **data, char **env);

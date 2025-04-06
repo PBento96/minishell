@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/05 13:08:30 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:13:31 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,32 +55,49 @@ char *ft_remove_quotes(char *str)
 	return result;
 }
 
-char	**ft_tokens_to_args(t_token *tokens, int token_count)
+char	**ft_tokens_to_args(t_command *command)
 {
 	char	**args;
 	int		i;
+	int		j;
 
-	args = (char **)malloc((token_count + 1) * sizeof(char *));
+
+	args = (char **)malloc((command->token_count + 1) * sizeof(char *));
 	if (!args)
 		return (NULL);
 	i = 0;
-	while (i < token_count)
+	j = 0;
+	while (i < command->token_count)
 	{
-		if (tokens[i].type != REDIR_APPEND && tokens[i].type != REDIR_DELIM
-				&& tokens[i].type != REDIR_IN && tokens[i].type != REDIR_OUT)
+		if (command->tokens[i].type != REDIR_APPEND && command->tokens[i].type != REDIR_DELIM
+				&& command->tokens[i].type != REDIR_IN && command->tokens[i].type != REDIR_OUT)
 		{
-			args[i] = ft_strdup(tokens[i].value);
-			if (!args[i])
+			args[j] = ft_strdup(command->tokens[i].value);
+			if (!args[j])
 			{
 				while (--i >= 0)
-					free(args[i]);
+					free(args[j]);
 				free(args);
 				return (NULL);
 			}
+			j++;
+		}
+		else
+		{
+			if (command->tokens[i].type == REDIR_OUT || command->tokens[i].type == REDIR_APPEND)
+			{
+				if (command->tokens[i].type == REDIR_APPEND )
+				{
+					command->redir.append = true;
+				}
+				ft_open_redirect_fds(&command->redir,NULL, command->tokens[++i].value);
+			}
+			else
+				ft_open_redirect_fds(&command->redir, command->tokens[++i].value, NULL);
 		}
 		i++;
 	}
-	args[i] = NULL;
+	args[j] = NULL;
 	return (args);
 }
 

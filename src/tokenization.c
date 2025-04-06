@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/05 12:44:40 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:55:36 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ void ft_tokenize_input(t_data *data)
 		{
 			data->commands[data->cmd_count].tokens[count++] = token;
 			data->commands[data->cmd_count].token_count = count;
+			data->commands[data->cmd_count].redir.in_fd = 0;
+			data->commands[data->cmd_count].redir.out_fd = 1;
 			ft_printf("Token Value: %s, Token Type:%d\n",token.value,token.type );
 		}
 		if (token.type == PIPE)

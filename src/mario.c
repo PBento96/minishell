@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/03 19:44:30 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:25:36 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
 {
 	if (data->prev_pipe != -1)
 	{
-		dup2(data->prev_pipe, STDIN_FILENO);
+		dup2(data->prev_pipe, data->commands[command - 1].redir.in_fd);
 		close(data->prev_pipe);
 	}
 	if (command < data->cmd_count)
 	{
-		dup2(pipefd[1], STDOUT_FILENO);
+		dup2(pipefd[1], data->commands[command - 1].redir.out_fd);
 		close(pipefd[1]);
 	}
 	if (command < data->cmd_count)
