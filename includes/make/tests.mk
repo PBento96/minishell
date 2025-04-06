@@ -11,18 +11,117 @@ norm:
 		error_files=$$(echo "$$norm_output" | grep -c "Error!"); \
 		total_errors=$$(echo "$$norm_output" | grep -c "Error:"); \
 		if [ $$total_errors -gt 0 ]; then \
-			printf "\t%-28s ${C_RED}[KO]${RESET_ALL} (%d of %d files checked. %d errors found in %d files)\n" $$dir $$total_files $$total_files $$total_errors $$error_files; \
+			printf "%-28s ${C_RED}[KO]${RESET_ALL} (%d of %d files checked. %d errors found in %d files)\n" $$dir $$total_files $$total_files $$total_errors $$error_files; \
 		else \
-			printf "\t%-28s ${C_GREEN}[OK]${RESET_ALL} (%d of %d files checked. %d errors found in %d files)\n" $$dir $$total_files $$total_files 0 0; \
+			printf "%-28s ${C_GREEN}[OK]${RESET_ALL} (%d of %d files checked. %d errors found in %d files)\n" $$dir $$total_files $$total_files 0 0; \
 		fi; \
 		echo >> ${NORM_LOGS}; \
 	done
 
+compile_with_progress:
+	@mkdir -p ${LOGS_DIR}
+	@truncate -s 0 ${LOGS_DIR}/compile.log
+	@LIBFT_FILES=$$(find includes/libft -name "*.c" 2>/dev/null | wc -l); \
+	SRC_FILES=$$(find src -name "*.c" 2>/dev/null | wc -l); \
+	TOTAL_FILES=$$((LIBFT_FILES + SRC_FILES)); \
+	BAR_SIZE=50; \
+	\
+	if [ "$$LIBFT_FILES" -gt 0 ]; then \
+		echo "Compiling libft..."; \
+		counter=0; \
+		for file in $$(find includes/libft -name "*.c" 2>/dev/null); do \
+			counter=$$((counter + 1)); \
+			percent=$$((counter * 100 / LIBFT_FILES)); \
+			bar_fill=$$((counter * BAR_SIZE / LIBFT_FILES)); \
+			printf "\r["; \
+			for i in $$(seq 1 $$bar_fill); do printf "#"; done; \
+			for i in $$(seq 1 $$((BAR_SIZE - bar_fill))); do printf " "; done; \
+			printf "] %3d%%" $$percent; \
+			${CC} ${CFLAGS} -c $$file -o $${file%.c}.o >> ${LOGS_DIR}/compile.log 2>&1 || touch ${LOGS_DIR}/compile_error; \
+			if [ -f ${LOGS_DIR}/compile_error ]; then \
+				printf "\r["; \
+				for i in $$(seq 1 $$BAR_SIZE); do printf "#"; done; \
+				printf "] 100%% ${C_RED}[KO]${RESET_ALL}\n"; \
+				echo "Error compiling $$file"; \
+				echo "Error details saved to ${LOGS_DIR}/compile.log"; \
+				rm -f ${LOGS_DIR}/compile_error; \
+				exit 1; \
+			fi; \
+		done; \
+		$(MAKE) -C includes/libft >> ${LOGS_DIR}/compile.log 2>&1 || touch ${LOGS_DIR}/compile_error; \
+		if [ -f ${LOGS_DIR}/compile_error ]; then \
+			printf "\r["; \
+			for i in $$(seq 1 $$BAR_SIZE); do printf "#"; done; \
+			printf "] 100%% ${C_RED}[KO]${RESET_ALL}\n"; \
+			echo "Error details saved to ${LOGS_DIR}/compile.log"; \
+			rm -f ${LOGS_DIR}/compile_error; \
+			exit 1; \
+		else \
+			printf "\r["; \
+			for i in $$(seq 1 $$BAR_SIZE); do printf "#"; done; \
+			printf "] 100%% ${C_GREEN}[OK]${RESET_ALL}\n"; \
+		fi; \
+	else \
+		printf "\t%-28s ${C_YELLOW}[SKIPPED]${RESET_ALL} (no source files)\n" "libft"; \
+	fi; \
+	\
+	if [ "$$SRC_FILES" -gt 0 ]; then \
+		echo "Compiling src..."; \
+		counter=0; \
+		for file in $$(find src -name "*.c" 2>/dev/null); do \
+			counter=$$((counter + 1)); \
+			percent=$$((counter * 100 / SRC_FILES)); \
+			bar_fill=$$((counter * BAR_SIZE / SRC_FILES)); \
+			printf "\r["; \
+			for i in $$(seq 1 $$bar_fill); do printf "#"; done; \
+			for i in $$(seq 1 $$((BAR_SIZE - bar_fill))); do printf " "; done; \
+			printf "] %3d%%" $$percent; \
+			${CC} ${CFLAGS} ${INCLUDES} -c $$file -o $${file%.c}.o >> ${LOGS_DIR}/compile.log 2>&1 || touch ${LOGS_DIR}/compile_error; \
+			if [ -f ${LOGS_DIR}/compile_error ]; then \
+				printf "\r["; \
+				for i in $$(seq 1 $$BAR_SIZE); do printf "#"; done; \
+				printf "] 100%% ${C_RED}[KO]${RESET_ALL}\n"; \
+				echo "Error compiling $$file"; \
+				echo "Error details saved to ${LOGS_DIR}/compile.log"; \
+				rm -f ${LOGS_DIR}/compile_error; \
+				exit 1; \
+			fi; \
+		done; \
+		$(MAKE) -C $(shell pwd) $(NAME) >> ${LOGS_DIR}/compile.log 2>&1 || touch ${LOGS_DIR}/compile_error; \
+		if [ -f ${LOGS_DIR}/compile_error ]; then \
+			printf "\r["; \
+			for i in $$(seq 1 $$BAR_SIZE); do printf "#"; done; \
+			printf "] 100%% ${C_RED}[KO]${RESET_ALL}\n"; \
+			echo "Error details saved to ${LOGS_DIR}/compile.log"; \
+			rm -f ${LOGS_DIR}/compile_error; \
+			exit 1; \
+		else \
+			printf "\r["; \
+			for i in $$(seq 1 $$BAR_SIZE); do printf "#"; done; \
+			printf "] 100%% ${C_GREEN}[OK]${RESET_ALL}\n"; \
+		fi; \
+	else \
+		printf "\t%-28s ${C_YELLOW}[SKIPPED]${RESET_ALL} (no source files)\n" "src"; \
+	fi;
+
 run:
-	@${MAKE} -s re
+	@echo "Cleaning old files..."
 	@${MAKE} -s fclean
-	${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}
-	@${MAKE} -s print_valgrind_results
+	@echo "Running norminette checks..."
+	@${MAKE} -s norm
+	@echo "Compiling project..."
+	@${MAKE} -s compile_with_progress || exit 0
+	@if [ ! -f ${BIN_DIR}/${NAME} ]; then \
+		printf "%-8s ${C_RED}[FAILED]${RESET_ALL}\n" "Build"; \
+		${MAKE} -s fclean; \
+		exit 0; \
+	else \
+		printf "%-8s ${C_GREEN}[COMPLETED]${RESET_ALL}\n" "Build"; \
+		${MAKE} -s clean; \
+		echo "Runing with Valgrind..."; \
+		${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}; \
+		${MAKE} -s print_valgrind_results; \
+	fi
 
 print_valgrind_results:
 	@echo
