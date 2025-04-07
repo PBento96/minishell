@@ -1,5 +1,20 @@
-name: norm
-on: [push]
+name: "Norminette"
+
+on:
+  workflow_call:
+    inputs:
+      reason:
+        description: 'Reason for triggering norminette'
+        required: false
+        type: string
+        default: 'Manual trigger'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for running'
+        required: false
+        default: 'Manual trigger'
+
 jobs:
   norminette:
     runs-on: ubuntu-latest
