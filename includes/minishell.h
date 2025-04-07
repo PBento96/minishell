@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/06 11:20:19 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:15:30 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define MAX_CWD_SIZE 4096
 # define MAX_PIPE_COUNT 10
 # define MAX_TOKENS 100
+# define FILE_PERM 0664
 
 typedef enum e_token_type
 {
