@@ -12,10 +12,19 @@
 name: "CodeQL Advanced"
 
 on:
-  push:
-    branches: [ "*" ]
-  pull_request:
-    branches: [ "*" ]
+  workflow_call:
+    inputs:
+      reason:
+        description: 'Reason for triggering norminette'
+        required: false
+        type: string
+        default: 'Manual trigger'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for running'
+        required: false
+        default: 'Manual security scan'
 
 jobs:
   analyze:
