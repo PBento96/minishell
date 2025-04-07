@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/06 12:10:12 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:19:06 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 			perror("execve");
 			ft_free((void **)&data->cmd_path);
 			ft_free_array((void **)cmd_args);
+			exit(EXIT_FAILURE);
 		}
 	}
 	ft_free((void **)&data->cmd_path);
@@ -51,7 +52,7 @@ static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 	ft_getpath(data, *cmd_args[0]);
 }
 
-static void	ft_create_child_process(t_data *data, int pipefd[2],
+static void ft_create_child_process(t_data *data, int pipefd[2],
 	int cmd_index, char **cmd_args)
 {
 	if (cmd_index < data->cmd_count)
@@ -62,16 +63,6 @@ static void	ft_create_child_process(t_data *data, int pipefd[2],
 	else if (data->pids[cmd_index] == 0)
 	{
 		ft_handle_pipes(data, pipefd, cmd_index);
-		if (data->commands[cmd_index].redir.in_fd != STDIN_FILENO)
-		{
-			dup2(data->commands[cmd_index].redir.in_fd, STDIN_FILENO);
-			close(data->commands[cmd_index].redir.in_fd);
-		}
-		if (data->commands[cmd_index].redir.out_fd != STDOUT_FILENO)
-		{
-			dup2(data->commands[cmd_index].redir.out_fd, STDOUT_FILENO);
-			close(data->commands[cmd_index].redir.out_fd);
-		}
 		ft_execute_command(data, cmd_args,
 			data->commands[cmd_index].tokens->type);
 	}

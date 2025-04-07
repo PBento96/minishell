@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/06 11:57:49 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:37:12 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void ft_wait_children(t_data *data, pid_t *pids)
 		}
 		free(pids);
 	}
+	if (data->prev_pipe != -1)
+		close(data->prev_pipe);
 }
 
 void ft_handle_pipes(t_data *data, int pipefd[2], int command)
@@ -43,8 +45,8 @@ void ft_handle_pipes(t_data *data, int pipefd[2], int command)
 			dup2(data->commands[command].redir.in_fd, STDIN_FILENO);
 			// Close it after duplicating
 			close(data->commands[command].redir.in_fd);
+			data->commands[command].redir.in_fd = 0;
 		}
-
 		close(data->prev_pipe);
 	}
 	else if (data->commands[command].redir.in_fd > 0)
@@ -53,6 +55,7 @@ void ft_handle_pipes(t_data *data, int pipefd[2], int command)
 		dup2(data->commands[command].redir.in_fd, STDIN_FILENO);
 		// Close it after duplicating
 		close(data->commands[command].redir.in_fd);
+		data->commands[command].redir.in_fd = 0;
 	}
 
 	if (command < data->cmd_count)
