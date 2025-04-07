@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       reason:
-        description: 'Reason for triggering norminette'
+        description: 'Reason for triggering compile check'
         required: false
         type: string
         default: 'Manual trigger'
@@ -13,7 +13,7 @@ on:
       reason:
         description: 'Reason for running'
         required: false
-        default: 'Manual security scan'
+        default: 'Manual trigger'
 
 jobs:
   build:
