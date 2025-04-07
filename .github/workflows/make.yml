@@ -1,6 +1,19 @@
-name: Compile Check
+name: "Compile Check"
 
-on: [push, pull_request]
+on:
+  workflow_call:
+    inputs:
+      reason:
+        description: 'Reason for triggering compile check'
+        required: false
+        type: string
+        default: 'Manual trigger'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for running'
+        required: false
+        default: 'Manual trigger'
 
 jobs:
   build:

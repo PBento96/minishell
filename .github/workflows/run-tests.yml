@@ -1,0 +1,35 @@
+name: "Run All Tests"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for running all tests'
+        required: false
+        default: 'Manual test run'
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+  packages: read
+
+jobs:
+  trigger-norminette:
+    uses: ./.github/workflows/norm.yml
+    with:
+      reason: ${{ github.event.inputs.reason }}
+
+  trigger-compile-check:
+    uses: ./.github/workflows/make.yml
+    with:
+      reason: ${{ github.event.inputs.reason }}
+
+  trigger-codeql:
+    uses: ./.github/workflows/codeql.yml
+    with:
+      reason: ${{ github.event.inputs.reason }}
