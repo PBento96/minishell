@@ -12,6 +12,12 @@ on:
         required: false
         default: 'Manual test run'
 
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+  packages: read
+
 jobs:
   trigger-norminette:
     uses: ./.github/workflows/norm.yml
