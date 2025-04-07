@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/05 14:06:21 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/06 11:20:19 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void	ft_pwd(t_data *data);
 void	ft_env(t_data *data);
 
 //	Pathing
-void	ft_getpath(t_data *data, int i);
+void	ft_getpath(t_data *data, char *arg);
 char	*ft_expand_variables(char *word, t_data *data);
 
 //	Pipe
