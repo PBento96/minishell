@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/07 20:19:06 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/15 20:23:27 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 				exit(EXIT_FAILURE);
 			}
 		printf("Executing command: %s\n", data->cmd_path);
+		printf("In FD: %d \nOut FD: %d\n", data->commands->redir.in_fd, data->commands->redir.out_fd);
 		if (execve(data->cmd_path, cmd_args, data->env))
 		{
 			perror("execve");
@@ -62,7 +63,7 @@ static void ft_create_child_process(t_data *data, int pipefd[2],
 		ft_pipe_error(data, cmd_args);
 	else if (data->pids[cmd_index] == 0)
 	{
-		ft_handle_pipes(data, pipefd, cmd_index);
+		ft_handle_pipes(data, pipefd, data->commands[cmd_index], cmd_index);
 		ft_execute_command(data, cmd_args,
 			data->commands[cmd_index].tokens->type);
 	}
@@ -122,8 +123,6 @@ void	ft_execute(t_data *data)
 				data->commands[cmd_index-1].redir.out_fd != STDOUT_FILENO &&
 				data->commands[cmd_index].redir.in_fd != STDIN_FILENO)
 			{
-				// Wait for previous command to finish if it's writing to a file
-				// that this command needs to read from
 				if (data->pids[cmd_index-1] > 0)
 					waitpid(data->pids[cmd_index-1], NULL, 0);
 			}
@@ -134,7 +133,7 @@ void	ft_execute(t_data *data)
 		ft_free_cmd(data, cmd_args);
 	}
 	ft_wait_children(data, data->pids);
-	// Close any remaining redirect file descriptors
+
 	for (int i = 0; i <= data->cmd_count; i++) {
 		ft_close_redirect_fds(&data->commands[i].redir);
 	}

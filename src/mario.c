@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/07 20:37:12 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/15 20:05:28 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,58 +32,30 @@ void ft_wait_children(t_data *data, pid_t *pids)
 		close(data->prev_pipe);
 }
 
-void ft_handle_pipes(t_data *data, int pipefd[2], int command)
+void	ft_handle_pipes(t_data *data, int pipefd[2], t_command command, int cmd_index)
 {
-	// If this command has input from a previous pipe
-	if (data->prev_pipe != -1)
+	// Handle input redirection
+	if (command.redir.in_fd != STDIN_FILENO)
 	{
-		// Only redirect if no file redirection has been set up
-		if (data->commands[command].redir.in_fd == 0)
-			dup2(data->prev_pipe, STDIN_FILENO);
-		else {
-			// We have a file redirection, apply it
-			dup2(data->commands[command].redir.in_fd, STDIN_FILENO);
-			// Close it after duplicating
-			close(data->commands[command].redir.in_fd);
-			data->commands[command].redir.in_fd = 0;
-		}
+		dup2(command.redir.in_fd, STDIN_FILENO);
+		close(command.redir.in_fd);
+	}
+	else if (cmd_index > 0) // Use previous pipe if no input redirection
+	{
+		dup2(data->prev_pipe, STDIN_FILENO);
 		close(data->prev_pipe);
 	}
-	else if (data->commands[command].redir.in_fd > 0)
+
+	// Handle output redirection
+	if (command.redir.out_fd != STDOUT_FILENO)
 	{
-		// No pipe but we have a file redirection
-		dup2(data->commands[command].redir.in_fd, STDIN_FILENO);
-		// Close it after duplicating
-		close(data->commands[command].redir.in_fd);
-		data->commands[command].redir.in_fd = 0;
+		dup2(command.redir.out_fd, STDOUT_FILENO);
+		close(command.redir.out_fd);
 	}
-
-	if (command < data->cmd_count)
+	else if (cmd_index < data->cmd_count) // Use pipe if no output redirection
 	{
-		// Only redirect output to pipe if no file redirection exists
-		if (data->commands[command].redir.out_fd == 1)
-			dup2(pipefd[1], STDOUT_FILENO);
-		else {
-			// We have a file redirection, apply it
-			dup2(data->commands[command].redir.out_fd, STDOUT_FILENO);
-			// Close it after duplicating
-			close(data->commands[command].redir.out_fd);
-			data->commands[command].redir.out_fd = 1;
-		}
-
+		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
-		data->prev_pipe = pipefd[0];
-	}
-	else
-	{
-		close(pipefd[0]);
-		// Apply any output redirection for the last command
-		if (data->commands[command].redir.out_fd > 1) {
-			dup2(data->commands[command].redir.out_fd, STDOUT_FILENO);
-			// Close it after duplicating
-			close(data->commands[command].redir.out_fd);
-			data->commands[command].redir.out_fd = 1;
-		}
 	}
 }
 

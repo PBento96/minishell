@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/07 20:15:30 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/15 20:05:01 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ void	ft_getpath(t_data *data, char *arg);
 char	*ft_expand_variables(char *word, t_data *data);
 
 //	Pipe
-void	ft_handle_pipes(t_data *data, int pipefd[2], int command);
+void	ft_handle_pipes(t_data *data, int pipefd[2], t_command command, int cmd_index);
 void	ft_wait_children(t_data *data, pid_t *pids);
 void	ft_pipe_error(t_data *data, char	**cmd_args);
 
