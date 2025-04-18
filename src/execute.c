@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/18 17:00:13 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/18 18:15:31 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ void	ft_execute(t_data *data)
 	int		cmd_index;
 	char	**cmd_args;
 
+	for (cmd_index = 0; cmd_index < data->cmd_count; cmd_index++)
+		pipe(data->heredoc_sync[cmd_index]);
 	cmd_index = -1;
 	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
 	if (!data->pids)
@@ -132,6 +134,12 @@ void	ft_execute(t_data *data)
 		}
 		ft_free_cmd(data, cmd_args);
 	}
+	
+	for (int i = 0; i < data->cmd_count; i++) {
+		close(data->heredoc_sync[i][0]);
+		close(data->heredoc_sync[i][1]);
+	}
+	
 	ft_wait_children(data, data->pids);
 
 	for (int i = 0; i <= data->cmd_count; i++) {

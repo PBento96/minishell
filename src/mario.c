@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mario.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/18 16:59:57 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/18 18:14:44 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,24 @@ void ft_wait_children(t_data *data, pid_t *pids)
 void	ft_handle_pipes(t_data *data, int pipefd[2], t_command command, int cmd_index)
 {
 	int heredoc_pipe[2];
+	
+	if (cmd_index > 0)
+    {
+        char dummy;
+        read(data->heredoc_sync[cmd_index - 1][0], &dummy, 1);
+        close(data->heredoc_sync[cmd_index - 1][0]);
+    }
+    // Handle input redirection
+    if (command.redir.delim)
+    {
+        ft_get_delim_buf(&command, command.redir.delim);
 
-	// Handle input redirection
-	if (command.redir.delim)
-	{
-		ft_get_delim_buf(&command, command.redir.delim);
+        // Signal next heredoc reader
+        if (cmd_index < data->cmd_count)
+        {
+            write(data->heredoc_sync[cmd_index][1], "", 1);
+            close(data->heredoc_sync[cmd_index][1]);
+        }
 		if (command.redir.delim_buf)
 		{
 			// Create a pipe to redirect the delim_buf content to stdin
