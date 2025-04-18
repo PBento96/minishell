@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/15 20:05:28 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/18 16:59:57 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,31 @@ void ft_wait_children(t_data *data, pid_t *pids)
 
 void	ft_handle_pipes(t_data *data, int pipefd[2], t_command command, int cmd_index)
 {
+	int heredoc_pipe[2];
+
 	// Handle input redirection
-	if (command.redir.in_fd != STDIN_FILENO)
+	if (command.redir.delim)
+	{
+		ft_get_delim_buf(&command, command.redir.delim);
+		if (command.redir.delim_buf)
+		{
+			// Create a pipe to redirect the delim_buf content to stdin
+			if (pipe(heredoc_pipe) == -1)
+			{
+				perror("pipe");
+				return;
+			}
+			// Write the collected content to the pipe
+			write(heredoc_pipe[1], command.redir.delim_buf,
+				ft_strlen(command.redir.delim_buf));
+			close(heredoc_pipe[1]);
+
+			// Redirect the pipe's read end to stdin
+			dup2(heredoc_pipe[0], STDIN_FILENO);
+			close(heredoc_pipe[0]);
+		}
+	}
+	else if (command.redir.in_fd != STDIN_FILENO)
 	{
 		dup2(command.redir.in_fd, STDIN_FILENO);
 		close(command.redir.in_fd);

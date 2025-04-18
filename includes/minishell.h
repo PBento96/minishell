@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/15 20:05:01 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/18 16:24:10 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ typedef enum e_token_type
 
 typedef struct s_redir
 {
-	char	*delimiter;
+	char	*delim;
+	char	*delim_buf;
 	int		in_fd;
 	int		out_fd;
 	bool	append;
@@ -138,5 +139,6 @@ void	ft_free_cmd(t_data *data, char	**cmd_args);
 //	FD handling
 void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out);
 void	ft_close_redirect_fds(t_redir *redir);
+void	ft_get_delim_buf(t_command *command, char *delim);
 
 #endif
