@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 20:39:23 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:29:45 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,6 @@
 /* ************************************************************************** */
 void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
-	int	i;
-
-	i = 0;
 	if (type == BUILTIN)
 		ft_execute_builtin(data, cmd_args);
 	else
@@ -53,32 +50,6 @@ static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 	ft_getpath(data, *cmd_args[0]);
 }
 
-static void ft_create_child_process(t_data *data, int pipefd[2],
-	int cmd_index, char **cmd_args)
-{
-	if (cmd_index < data->cmd_count)
-		ft_setup_pipes(pipefd);
-	data->pids[cmd_index] = fork();
-	if (data->pids[cmd_index] == -1)
-		ft_pipe_error(data, cmd_args);
-	else if (data->pids[cmd_index] == 0)
-	{
-		ft_handle_pipes(data, pipefd, data->commands[cmd_index], cmd_index);
-		ft_execute_command(data, cmd_args,
-			data->commands[cmd_index].tokens->type);
-	}
-}
-
-static void	ft_handle_parent(t_data *data, int pipefd[2], int cmd_index)
-{
-	if (cmd_index < data->cmd_count)
-		close(pipefd[1]);
-	if (data->prev_pipe != -1)
-		close(data->prev_pipe);
-	if (cmd_index < data->cmd_count)
-		data->prev_pipe = pipefd[0];
-}
-
 /* ************************************************************************** */
 /*                                                                            */
 /*   Executes commands in the pipeline                                       */
@@ -96,61 +67,6 @@ static void	ft_setup_heredoc_sync(t_data *data)
 		pipe(data->heredoc_sync[i]);
 		i++;
 	}
-}
-
-/* ************************************************************************** */
-/*                                                                            */
-/*   Executes a lone builtin command without forking                         */
-/*   Sets up file redirection for stdin and stdout                           */
-/*   Preserves original file descriptors                                     */
-/*   Restores original stdin and stdout after execution                      */
-/* ************************************************************************** */
-static void	ft_execute_lone_builtin(t_data *data, int cmd_index, char **cmd_args)
-{
-	int	original_stdin;
-	int	original_stdout;
-
-	original_stdin = dup(STDIN_FILENO);
-	original_stdout = dup(STDOUT_FILENO);
-	if (data->commands[cmd_index].redir.in_fd != STDIN_FILENO)
-	{
-		dup2(data->commands[cmd_index].redir.in_fd, STDIN_FILENO);
-		close(data->commands[cmd_index].redir.in_fd);
-	}
-	if (data->commands[cmd_index].redir.out_fd != STDOUT_FILENO)
-	{
-		dup2(data->commands[cmd_index].redir.out_fd, STDOUT_FILENO);
-		close(data->commands[cmd_index].redir.out_fd);
-	}
-	data->pids[cmd_index] = -1;
-	write(1, "Executing Lone Builtin\n", 23);
-	ft_execute_builtin(data, cmd_args);
-	dup2(original_stdin, STDIN_FILENO);
-	dup2(original_stdout, STDOUT_FILENO);
-	close(original_stdin);
-	close(original_stdout);
-}
-
-/* ************************************************************************** */
-/*                                                                            */
-/*   Handles execution of commands in a pipeline                             */
-/*   Waits for certain processes when needed                                 */
-/*   Creates child processes for command execution                           */
-/*   Manages parent process handling of pipes                                */
-/* ************************************************************************** */
-static void	ft_handle_command(t_data *data, int *pipefd, int cmd_index,
-	char **cmd_args)
-{
-	if (cmd_index > 0 && data->commands[cmd_index - 1].redir.out_fd
-		!= STDOUT_FILENO && data->commands[cmd_index].redir.in_fd
-		!= STDIN_FILENO)
-	{
-		if (data->pids[cmd_index - 1] > 0)
-			waitpid(data->pids[cmd_index - 1], NULL, 0);
-	}
-	ft_create_child_process(data, pipefd, cmd_index, cmd_args);
-	if (data->pids[cmd_index] > 0)
-		ft_handle_parent(data, pipefd, cmd_index);
 }
 
 /* ************************************************************************** */
@@ -203,8 +119,8 @@ void	ft_execute(t_data *data)
 	while (++cmd_index < data->cmd_count + 1 && !g_signal)
 	{
 		ft_prepare_command(data, cmd_index, &cmd_args);
-		if (data->cmd_count == 0 &&
-			data->commands[cmd_index].tokens->type == BUILTIN)
+		if (data->cmd_count == 0 && data->commands[cmd_index]
+			.tokens->type == BUILTIN)
 			ft_execute_lone_builtin(data, cmd_index, cmd_args);
 		else
 			ft_handle_command(data, pipefd, cmd_index, cmd_args);

@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:37:51 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/26 17:57:33 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:07:14 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,25 +53,14 @@ void	ft_free_env_array(t_data *data)
 void	ft_shutdown(t_data **data, int retval)
 {
 	ft_printf(C_YELLOW"\nExiting Minishell...\n"RESET_COLOR);
-
 	if (*data)
 	{
-		// Free command history if using readline
 		clear_history();
-
-		// Free any input that might still be allocated
 		if ((*data)->input)
 			ft_free((void **)&((*data)->input));
-
-		// Free any token lists or parse trees
 		ft_free_tokens(*data);
-
-		// Free environment variables if they were duplicated
 		ft_free_env_array(*data);
-
-		// Finally free the main data structure
 		ft_free((void **)data);
 	}
-
 	exit(retval);
 }

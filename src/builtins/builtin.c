@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 20:38:29 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:36:37 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,10 @@ void	ft_execute_builtin(t_data *data, char **cmd_args)
 {
 	char	*cmd;
 	size_t	len;
-	int		i;
 
 	cmd = cmd_args[0];
 	len = ft_strlen(cmd) + 1;
 	printf("Executing builtin\n");
-	i = 0;
 	if (!ft_strncmp(OP_EXT, cmd, len))
 		ft_exit(data, cmd_args);
 	if (!ft_strncmp(OP_PWD, cmd, len))
@@ -40,4 +38,3 @@ void	ft_execute_builtin(t_data *data, char **cmd_args)
 	if (!ft_strncmp(OP_CD, cmd, len))
 		ft_cd(data, cmd_args);
 }
-

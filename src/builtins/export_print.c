@@ -6,20 +6,11 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/05 10:51:16 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:45:11 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	swap_strings(char **a, char **b)
-{
-	char	*temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
 
 static char	**dup_env_array(char **env)
 {

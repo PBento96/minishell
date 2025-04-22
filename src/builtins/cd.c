@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/05 10:33:32 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:45:57 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 /************/
 /*Update ENV*/
 /************/
-void	ft_set_env(char **env_var, char *change, char *search)
+void	ft_set_env(char **envvar, char *change, char *search)
 {
-	char	*new_env;
+	char	*newenv;
 
-	if (ft_strncmp(*env_var, search, ft_strlen(search)) == 0)
+	if (ft_strncmp(*envvar, search, ft_strlen(search)) == 0)
 	{
-		new_env = ft_strjoin(search, change);
-		if (new_env)
+		newenv = ft_strjoin(search, change);
+		if (newenv)
 		{
-			free(*env_var);
-			*env_var = new_env;
+			free(*envvar);
+			*envvar = newenv;
 		}
 	}
 }
@@ -49,30 +49,30 @@ void	ft_set_data_env(t_data *data, char *OLDPWD)
 /********************/
 /*CD Builtin Command*/
 /********************/
-void	ft_cd(t_data *data, char **cmd_args)
+void	ft_cd(t_data *data, char **cmdargs)
 {
-	char OLDPWD[MAX_CWD_SIZE];
-	char *OLDPWD_cp;
-	char *path;
+	char	oldpwd[MAX_CWD_SIZE];
+	char	*copy;
+	char	*path;
 
-	if (!cmd_args[1])
+	if (!cmdargs[1])
 	{
 		path = ft_getenv("HOME", data->env);
 		if (!path)
 		{
 			write(2, "cd: Home not set\n", 18);
-			return;
+			return ;
 		}
 	}
 	else
-		path = cmd_args[1];
-	getcwd(OLDPWD, sizeof(OLDPWD));
+		path = cmdargs[1];
+	getcwd(oldpwd, sizeof(oldpwd));
 	if (chdir(path) != 0)
 	{
 		perror("cd");
-		return;
+		return ;
 	}
 	getcwd(data->cwd, sizeof(data->cwd));
-	OLDPWD_cp = ft_strdup(OLDPWD);
-	ft_set_data_env(data, OLDPWD_cp);
+	copy = ft_strdup(oldpwd);
+	ft_set_data_env(data, copy);
 }

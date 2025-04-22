@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 14:48:25 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/22 20:06:24 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:35:57 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	ft_check_delimiter(char *new, char *delim)
 	return (0);
 }
 
-static void	ft_append_line(t_command *command, char **temp, char *new)
+static void	ft_append_line(char **temp, char *new)
 {
 	char	*with_newline;
 	char	*combined;
@@ -70,7 +70,7 @@ void	ft_get_delim_buf(t_command *command, char *delim)
 		}
 		if (ft_check_delimiter(new, delim))
 			break ;
-		ft_append_line(command, &temp, new);
+		ft_append_line(&temp, new);
 		free(new);
 	}
 	command->redir.delim_buf = temp;
