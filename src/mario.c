@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mario.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/18 18:14:44 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:39:39 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,67 +32,103 @@ void ft_wait_children(t_data *data, pid_t *pids)
 		close(data->prev_pipe);
 }
 
-void	ft_handle_pipes(t_data *data, int pipefd[2], t_command command, int cmd_index)
+/* ************************************************************************** */
+/*                                                                            */
+/*   Manages pipe and redirection setup for command execution                */
+/*   Handles input from heredocs, files, or previous pipes                   */
+/*   Sets up output redirections to files or pipes                           */
+/*   Ensures proper synchronization of heredoc processing                    */
+/* ************************************************************************** */
+static void	ft_handle_heredoc(t_data *data, t_command cmd, int cmd_index)
 {
-	int heredoc_pipe[2];
-	
-	if (cmd_index > 0)
-    {
-        char dummy;
-        read(data->heredoc_sync[cmd_index - 1][0], &dummy, 1);
-        close(data->heredoc_sync[cmd_index - 1][0]);
-    }
-    // Handle input redirection
-    if (command.redir.delim)
-    {
-        ft_get_delim_buf(&command, command.redir.delim);
+	int	heredoc_pipe[2];
 
-        // Signal next heredoc reader
-        if (cmd_index < data->cmd_count)
-        {
-            write(data->heredoc_sync[cmd_index][1], "", 1);
-            close(data->heredoc_sync[cmd_index][1]);
-        }
-		if (command.redir.delim_buf)
-		{
-			// Create a pipe to redirect the delim_buf content to stdin
-			if (pipe(heredoc_pipe) == -1)
-			{
-				perror("pipe");
-				return;
-			}
-			// Write the collected content to the pipe
-			write(heredoc_pipe[1], command.redir.delim_buf,
-				ft_strlen(command.redir.delim_buf));
-			close(heredoc_pipe[1]);
-
-			// Redirect the pipe's read end to stdin
-			dup2(heredoc_pipe[0], STDIN_FILENO);
-			close(heredoc_pipe[0]);
-		}
-	}
-	else if (command.redir.in_fd != STDIN_FILENO)
+	ft_get_delim_buf(&cmd, cmd.redir.delim);
+	if (cmd_index < data->cmd_count)
 	{
-		dup2(command.redir.in_fd, STDIN_FILENO);
-		close(command.redir.in_fd);
+		write(data->heredoc_sync[cmd_index][1], "", 1);
+		close(data->heredoc_sync[cmd_index][1]);
 	}
-	else if (cmd_index > 0) // Use previous pipe if no input redirection
+	if (cmd.redir.delim_buf)
+	{
+		if (pipe(heredoc_pipe) == -1)
+		{
+			perror("pipe");
+			return ;
+		}
+		write(heredoc_pipe[1], cmd.redir.delim_buf,
+			ft_strlen(cmd.redir.delim_buf));
+		close(heredoc_pipe[1]);
+		dup2(heredoc_pipe[0], STDIN_FILENO);
+		close(heredoc_pipe[0]);
+	}
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Handles input redirection setup for commands                            */
+/*   Processes input from files or previous pipes                            */
+/*   Ensures correct file descriptor duplication                             */
+/*   Properly closes original file descriptors after duplication             */
+/* ************************************************************************** */
+static void	ft_handle_input(t_data *data, t_command cmd, int cmd_index)
+{
+	if (cmd.redir.in_fd != STDIN_FILENO)
+	{
+		dup2(cmd.redir.in_fd, STDIN_FILENO);
+		close(cmd.redir.in_fd);
+	}
+	else if (cmd_index > 0)
 	{
 		dup2(data->prev_pipe, STDIN_FILENO);
 		close(data->prev_pipe);
 	}
+}
 
-	// Handle output redirection
-	if (command.redir.out_fd != STDOUT_FILENO)
+/* ************************************************************************** */
+/*                                                                            */
+/*   Handles output redirection setup for commands                           */
+/*   Manages output to files or next pipe in the pipeline                    */
+/*   Ensures correct file descriptor duplication                             */
+/*   Properly closes original file descriptors after duplication             */
+/* ************************************************************************** */
+static void	ft_handle_output(t_data *data, t_command cmd,
+							int pipefd[2], int cmd_index)
+{
+	if (cmd.redir.out_fd != STDOUT_FILENO)
 	{
-		dup2(command.redir.out_fd, STDOUT_FILENO);
-		close(command.redir.out_fd);
+		dup2(cmd.redir.out_fd, STDOUT_FILENO);
+		close(cmd.redir.out_fd);
 	}
-	else if (cmd_index < data->cmd_count) // Use pipe if no output redirection
+	else if (cmd_index < data->cmd_count)
 	{
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
 	}
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Coordinates pipe and redirection handling                               */
+/*   Sets up inheritance of file descriptors between commands                */
+/*   Processes heredoc input when needed                                     */
+/*   Ensures proper synchronization in the pipeline                          */
+/* ************************************************************************** */
+void	ft_handle_pipes(t_data *data, int pipefd[2],
+						t_command command, int cmd_index)
+{
+	if (cmd_index > 0)
+	{
+		char	dummy;
+
+		read(data->heredoc_sync[cmd_index - 1][0], &dummy, 1);
+		close(data->heredoc_sync[cmd_index - 1][0]);
+	}
+	if (command.redir.delim)
+		ft_handle_heredoc(data, command, cmd_index);
+	else
+		ft_handle_input(data, command, cmd_index);
+	ft_handle_output(data, command, pipefd, cmd_index);
 }
 
 void	ft_setup_pipes(int pipefd[2])

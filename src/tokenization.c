@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/06 11:02:32 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:40:09 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,40 +18,67 @@ void	ft_free_cmd(t_data *data, char	**cmd_args)
 	ft_free_array((void **)cmd_args);
 }
 
+/* ************************************************************************** */
+/*                                                                            */
+/*   Handles parsing of output redirection operators                         */
+/*   Recognizes > and >> operators                                           */
+/*   Updates token type and value                                            */
+/*   Advances input pointer past the parsed redirection                      */
+/* ************************************************************************** */
+static void	ft_parse_output_redir(char **ptr, t_token *token)
+{
+	if (*(*ptr + 1) == '>')
+	{
+		token->type = REDIR_APPEND;
+		token->value = ft_strdup(">>");
+		(*ptr) += 2;
+	}
+	else
+	{
+		token->type = REDIR_OUT;
+		token->value = ft_strdup(">");
+		(*ptr)++;
+	}
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Handles parsing of input redirection operators                          */
+/*   Recognizes < and << operators                                           */
+/*   Updates token type and value                                            */
+/*   Advances input pointer past the parsed redirection                      */
+/* ************************************************************************** */
+static void	ft_parse_input_redir(char **ptr, t_token *token)
+{
+	if (*(*ptr + 1) == '<')
+	{
+		token->type = REDIR_DELIM;
+		token->value = ft_strdup("<<");
+		(*ptr) += 2;
+	}
+	else
+	{
+		token->type = REDIR_IN;
+		token->value = ft_strdup("<");
+		(*ptr)++;
+	}
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Parses redirection operators from input                                 */
+/*   Identifies different types of redirections: >, >>, <, <<                */
+/*   Creates appropriate token with correct type and value                   */
+/*   Delegates to specialized functions for each redirection type            */
+/* ************************************************************************** */
 static t_token	ft_parse_redirection(char **ptr)
 {
 	t_token	token;
 
 	if (**ptr == '>')
-	{
-		if (*(*ptr + 1) == '>')
-		{
-			token.type = REDIR_APPEND;
-			token.value = ft_strdup(">>");
-			(*ptr) += 2;
-		}
-		else
-		{
-			token.type = REDIR_OUT;
-			token.value = ft_strdup(">");
-			(*ptr)++;
-		}
-	}
+		ft_parse_output_redir(ptr, &token);
 	else if (**ptr == '<')
-	{
-		if (*(*ptr + 1) == '<')
-		{
-			token.type = REDIR_DELIM;
-			token.value = ft_strdup("<<");
-			(*ptr) += 2;
-		}
-		else
-		{
-			token.type = REDIR_IN;
-			token.value = ft_strdup("<");
-			(*ptr)++;
-		}
-	}
+		ft_parse_input_redir(ptr, &token);
 	return (token);
 }
 
@@ -114,15 +141,51 @@ static int ft_handle_quotes_in_input(t_data *data)
 	return (1);
 }
 
-void ft_tokenize_input(t_data *data)
+/* ************************************************************************** */
+/*                                                                            */
+/*   Initializes command structure for tokenization                          */
+/*   Sets up file descriptors and token counters                             */
+/*   Adds parsed token to the current command                                */
+/*   Handles debug output of token information                               */
+/* ************************************************************************** */
+static void	ft_add_token_to_command(t_data *data, t_token token, int *count)
 {
-	t_token token;
-	char *ptr;
-	int count;
+	data->commands[data->cmd_count].tokens[(*count)++] = token;
+	data->commands[data->cmd_count].token_count = *count;
+	data->commands[data->cmd_count].redir.in_fd = 0;
+	data->commands[data->cmd_count].redir.out_fd = 1;
+	ft_printf("Token Value: %s, Token Type:%d\n", token.value, token.type);
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Processes a pipe token in the command line                              */
+/*   Increments the command count to start a new command                     */
+/*   Resets the token counter for the new command                            */
+/*   Allows for proper separation of piped commands                          */
+/* ************************************************************************** */
+static void	ft_handle_pipe_token(t_data *data, int *count)
+{
+	data->cmd_count++;
+	*count = 0;
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Tokenizes the input string into commands and arguments                  */
+/*   Handles balanced quotes checking                                        */
+/*   Parses tokens and organizes them into command structures                */
+/*   Manages pipe separation between commands                                */
+/* ************************************************************************** */
+void	ft_tokenize_input(t_data *data)
+{
+	t_token	token;
+	char	*ptr;
+	int		count;
 
 	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
 	if (!ft_handle_quotes_in_input(data))
-		return;
+		return ;
 	ptr = data->input;
 	count = 0;
 	data->cmd_count = 0;
@@ -130,18 +193,9 @@ void ft_tokenize_input(t_data *data)
 	{
 		token = ft_parse_token(&ptr, data);
 		if (token.value && token.type != PIPE)
-		{
-			data->commands[data->cmd_count].tokens[count++] = token;
-			data->commands[data->cmd_count].token_count = count;
-			data->commands[data->cmd_count].redir.in_fd = 0;
-			data->commands[data->cmd_count].redir.out_fd = 1;
-			ft_printf("Token Value: %s, Token Type:%d\n",token.value,token.type );
-		}
+			ft_add_token_to_command(data, token, &count);
 		if (token.type == PIPE)
-		{
-			data->cmd_count++;
-			count = 0;
-		}
+			ft_handle_pipe_token(data, &count);
 		ptr = ft_skip_whitespace(ptr);
 	}
 }
