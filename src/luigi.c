@@ -65,13 +65,13 @@ static void	ft_handle_output(t_data *data, t_command cmd,
 void	ft_handle_pipes(t_data *data, int pipefd[2],
 	t_command command, int cmd_index)
 {
-	char	dummy;
-
-	if (cmd_index > 0)
+	if (cmd_index > 0 && data->commands[cmd_index - 1].redir.delim)
 	{
-		read(data->heredoc_sync[cmd_index - 1][0], &dummy, 1);
+		read(data->heredoc_sync[cmd_index - 1][0], "", 1);
 		close(data->heredoc_sync[cmd_index - 1][0]);
 	}
+	else if (cmd_index > 0)
+		close(data->heredoc_sync[cmd_index - 1][0]);
 	if (command.redir.delim)
 		ft_handle_heredoc(data, command, cmd_index);
 	else
