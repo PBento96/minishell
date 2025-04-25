@@ -78,5 +78,5 @@ void	ft_getpath(t_data *data, char *arg)
 		return ;
 	}
 	data->cmd_path = ft_findcmd(dirs, arg);
-	ft_free((void **)&dirs);
+	ft_free_array((void **)dirs);
 }

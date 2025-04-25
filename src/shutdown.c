@@ -44,7 +44,8 @@ void	ft_free_env_array(t_data *data)
 		return ;
 	while (data->env[i])
 	{
-		ft_free((void **)&data->env[i]);
+		if(data->env[i])
+			ft_free((void **)&data->env[i]);
 		i++;
 	}
 	ft_free((void **)&data->env);
@@ -59,7 +60,8 @@ void	ft_shutdown(t_data **data, int retval)
 		if ((*data)->input)
 			ft_free((void **)&((*data)->input));
 		ft_free_tokens(*data);
-		ft_free_env_array(*data);
+		if ((*data)->env)
+			ft_free_array((void **)(*data)->env);
 		ft_free((void **)data);
 	}
 	exit(retval);
