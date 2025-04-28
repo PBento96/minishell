@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:37:51 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/22 21:07:14 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:16:05 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ft_free_env_array(t_data *data)
 		return ;
 	while (data->env[i])
 	{
-		if(data->env[i])
+		if (data->env[i])
 			ft_free((void **)&data->env[i]);
 		i++;
 	}
