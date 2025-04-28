@@ -6,16 +6,24 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:26:11 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:21:36 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free_cmd(t_data *data, char	**cmd_args)
+void	ft_free_cmd(t_data *data, char **cmd_args)
 {
-	ft_free((void **)&data->cmd_path);
-	ft_free_array((void **)cmd_args);
+	if (data && data->cmd_path)
+	{
+		ft_free((void **)&data->cmd_path);
+		data->cmd_path = NULL;
+	}
+	if (cmd_args)
+	{
+		ft_free_array((void **)cmd_args);
+		cmd_args = NULL;
+	}
 }
 
 static void	ft_add_token_to_command(t_data *data, t_token token, int *count)

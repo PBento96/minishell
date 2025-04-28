@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:00:20 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:12:24 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,6 @@ static void	ft_cleanup_execution(t_data *data)
 		ft_close_redirect_fds(&data->commands[i].redir);
 		i++;
 	}
-	if (data->pids)
-		free(data->pids);
 	data->pids = NULL;
 }
 
