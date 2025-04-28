@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/03/24 11:19:28 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:51:27 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,22 @@ void	ft_process_input(t_data *data)
 	int	i;
 
 	i = 0;
-	while (data->input[i] != '\n' && data->input[i] != '\0')
+	while (ft_isspace(data->input[i]) && data->input[i] != '\0')
+	{
+		if (data->input[i] == '\t')
+			data->input[i] = ' ';
 		i++;
-	if (data->input[i] == '\n')
-		data->input[i] = '\0';
-	if (ft_strlen(data->input) == 0)
+	}
+	if (data->input[i] == '\n' || data->input[i] == '\0')
 	{
 		ft_free((void **) &(data->input));
 		return ;
+	}
+	while (data->input[i] != '\0')
+	{
+		if (data->input[i] == '\t')
+			data->input[i] = ' ';
+		i++;
 	}
 	add_history(data->input);
 	ft_tokenize_input(data);
@@ -56,8 +64,8 @@ static void	ft_iohandler(t_data *data)
 	data->input = readline(prompt);
 	if (!data->input)
 	{
-		perror("readline");
-		ft_shutdown(&data, ERR_IO);
+		write(1, "exit\n", 5);
+		ft_shutdown(&data, OK);
 	}
 	ft_process_input(data);
 }
@@ -66,8 +74,25 @@ static void	ft_sighandler(int signum, siginfo_t *info, void *context)
 {
 	(void)info;
 	(void)context;
-	if (signum == SIGINT || signum == SIGQUIT || signum == SIGTERM)
-		g_signal = SIGTERM;
+	if (signum == SIGINT)
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
+/* Adds a tab character when TAB is pressed instead of autocompletion */
+static int	ft_tab_handler(int count, int key)
+{
+	(void)count;
+	if (key == '\t')
+	{
+		rl_insert_text("\t");
+		return (0);
+	}
+	return (1);
 }
 
 /* Should start signal handling before running loop */
@@ -90,6 +115,7 @@ int	main(int argc, char **argv, char **env)
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
+	rl_bind_key('\t', &ft_tab_handler);
 	while (!g_signal)
 		ft_iohandler(data);
 	ft_shutdown(&data, OK);

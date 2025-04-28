@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isspace.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:39:57 by pda-silv          #+#    #+#             */
-/*   Updated: 2024/09/27 14:57:56 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:37:43 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_isspace(int c)
 {
-	if (c == 32 || (c > 8 && c < 14))
-		return (c);
+	if (c == 32 || (c >= 9 && c <= 13))
+		return (1);
 	return (0);
 }

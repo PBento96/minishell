@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:17:42 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:01:07 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,21 +46,23 @@ static int	count_chars_without_quotes(char *str)
  */
 static void	copy_without_quotes(char *str, char *result)
 {
-	int	i;
-	int	j;
-	int	in_single_quotes;
-	int	in_double_quotes;
+	int		i;
+	int		j;
+	char	quote_type;
 
 	i = 0;
 	j = 0;
-	in_single_quotes = 0;
-	in_double_quotes = 0;
+	quote_type = '\0';
 	while (str[i])
 	{
-		if (str[i] == '\'' && !in_double_quotes)
-			in_single_quotes = !in_single_quotes;
-		else if (str[i] == '\"' && !in_single_quotes)
-			in_double_quotes = !in_double_quotes;
+		if ((str[i] == '\'' || str[i] == '\"') && (quote_type == '\0'
+				|| quote_type == str[i]))
+		{
+			if (quote_type == '\0')
+				quote_type = str[i];
+			else
+				quote_type = '\0';
+		}
 		else
 			result[j++] = str[i];
 		i++;
