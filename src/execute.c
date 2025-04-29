@@ -6,29 +6,38 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/07 09:15:56 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:12:24 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* ************************************************************************** */
+/*                                                                            */
+/*   Executes a command with the given arguments                             */
+/*   For builtins, runs them directly                                        */
+/*   For external commands, uses execve with proper path                     */
+/*   Handles cleanup and exits the child process when done                   */
+/* ************************************************************************** */
 void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
-	int		i;
-
-	i = 0;
-	while (cmd_args[i] != NULL)
-	{
-		printf("arg[%d]: %s\n", i, cmd_args[i]);
-		i++;
-	}
 	if (type == BUILTIN)
 		ft_execute_builtin(data, cmd_args);
 	else
 	{
-		printf("Executing command: %s\n", data->cmd_path);
-		execve(data->cmd_path, cmd_args, data->env);
-		perror("execve");
+		if (data->cmd_path == NULL)
+		{
+			ft_printf(C_RED"%s: Command not found\n"RESET_ALL, cmd_args[0]);
+			ft_free_array((void **)cmd_args);
+			exit(EXIT_FAILURE);
+		}
+		if (execve(data->cmd_path, cmd_args, data->env))
+		{
+			perror("execve");
+			ft_free((void **)&data->cmd_path);
+			ft_free_array((void **)cmd_args);
+			exit(EXIT_FAILURE);
+		}
 	}
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
@@ -37,55 +46,86 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 {
-	*cmd_args = ft_tokens_to_args(data->commands[cmd_index].tokens,
-			data->commands[cmd_index].token_count);
-	ft_getpath(data, cmd_index);
+	*cmd_args = ft_tokens_to_args(&data->commands[cmd_index]);
+	ft_getpath(data, *cmd_args[0]);
 }
 
-static void	ft_create_child_process(t_data *data, int pipefd[2],
-	int cmd_index, char **cmd_args)
+/* ************************************************************************** */
+/*                                                                            */
+/*   Executes commands in the pipeline                                       */
+/*   Sets up pipes and heredoc synchronization                               */
+/*   Handles execution flow for builtins and external commands               */
+/*   Manages command redirection and cleanup                                 */
+/* ************************************************************************** */
+static void	ft_setup_heredoc_sync(t_data *data)
 {
-	if (cmd_index < data->cmd_count)
-		ft_setup_pipes(pipefd);
-	data->pids[cmd_index] = fork();
-	if (data->pids[cmd_index] == -1)
-		ft_pipe_error(data, cmd_args);
-	else if (data->pids[cmd_index] == 0)
+	int	i;
+
+	i = 0;
+	while (i < data->cmd_count)
 	{
-		ft_handle_pipes(data, pipefd, cmd_index);
-		ft_execute_command(data, cmd_args,
-			data->commands[cmd_index].tokens->type);
+		pipe(data->heredoc_sync[i]);
+		i++;
 	}
 }
 
-static void	ft_handle_parent(t_data *data, int pipefd[2], int cmd_index)
+/* ************************************************************************** */
+/*                                                                            */
+/*   Performs cleanup operations after command execution                     */
+/*   Closes heredoc synchronization pipes                                    */
+/*   Waits for child processes to complete                                   */
+/*   Closes any redirected file descriptors                                  */
+/* ************************************************************************** */
+static void	ft_cleanup_execution(t_data *data)
 {
-	if (cmd_index < data->cmd_count)
-		close(pipefd[1]);
-	if (data->prev_pipe != -1)
-		close(data->prev_pipe);
-	if (cmd_index < data->cmd_count)
-		data->prev_pipe = pipefd[0];
+	int	i;
+
+	i = 0;
+	while (i < data->cmd_count)
+	{
+		close(data->heredoc_sync[i][0]);
+		close(data->heredoc_sync[i][1]);
+		i++;
+	}
+	ft_wait_children(data, data->pids);
+	i = 0;
+	while (i <= data->cmd_count)
+	{
+		ft_close_redirect_fds(&data->commands[i].redir);
+		i++;
+	}
+	data->pids = NULL;
 }
 
+/* ************************************************************************** */
+/*                                                                            */
+/*   Main command execution controller                                       */
+/*   Allocates memory for process IDs                                        */
+/*   Processes commands one by one                                           */
+/*   Handles special case for lone builtins                                  */
+/*   Coordinates cleanup after execution                                     */
+/* ************************************************************************** */
 void	ft_execute(t_data *data)
 {
 	int		pipefd[2];
 	int		cmd_index;
 	char	**cmd_args;
 
+	ft_setup_heredoc_sync(data);
 	cmd_index = -1;
 	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
 	if (!data->pids)
 		return ;
 	data->prev_pipe = -1;
-	while (++cmd_index <= data->cmd_count && !g_signal)
+	while (++cmd_index < data->cmd_count + 1 && !g_signal)
 	{
 		ft_prepare_command(data, cmd_index, &cmd_args);
-		ft_create_child_process(data, pipefd, cmd_index, cmd_args);
-		if (data->pids[cmd_index] > 0)
-			ft_handle_parent(data, pipefd, cmd_index);
+		if (data->cmd_count == 0 && data->commands[cmd_index]
+			.tokens->type == BUILTIN)
+			ft_execute_lone_builtin(data, cmd_index, cmd_args);
+		else
+			ft_handle_command(data, pipefd, cmd_index, cmd_args);
 		ft_free_cmd(data, cmd_args);
 	}
-	ft_wait_children(data, data->pids);
+	ft_cleanup_execution(data);
 }

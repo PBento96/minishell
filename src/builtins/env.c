@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isspace.c                                       :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 14:39:57 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/28 14:37:43 by joseferr         ###   ########.fr       */
+/*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
+/*   Updated: 2025/04/05 10:33:30 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isspace(int c)
+#include "minishell.h"
+
+/*********************/
+/*Env Builtin Command*/
+/*********************/
+void	ft_env(t_data *data)
 {
-	if (c == 32 || (c >= 9 && c <= 13))
-		return (1);
-	return (0);
+	int	i;
+
+	i = 0;
+	while (data->env[i] != NULL)
+	{
+		ft_printf("%s\n", data->env[i]);
+		i++;
+	}
 }

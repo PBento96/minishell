@@ -21,7 +21,7 @@ SRC = ft_abs.c ft_atoi.c ft_atol.c ft_bzero.c ft_calloc.c ft_dlstadd_back.c \
 	  ft_memcmp.c ft_dlstiter.c ft_putendl_fd.c ft_dlstdelone.c ft_isalpha.c ft_memmove.c \
 	  ft_dlstlast.c ft_putnbr_fd.c ft_strjoin.c ft_lstadd_front.c ft_putchar_fd.c \
 	  ft_strlcpy.c ft_memcmp.c ft_dlstiter.c ft_putendl_fd.c ft_dlstdelone.c ft_isalpha.c \
-	  ft_memmove.c ft_dlstlast.c ft_putnbr_fd.c ft_strjoin.c ft_lstadd_front.c \
+	  ft_memmove.c ft_dlstlast.c ft_putnbr_fd.c ft_strjoin.c ft_lstadd_front.c ft_strlcat.c\
 	  ft_printf/ft_render1.c ft_printf/ft_parser.c ft_printf/ft_utils2.c \
 	  ft_printf/ft_render3.c ft_printf/ft_printf.c ft_printf/ft_utils1.c \
 	  ft_printf/ft_render2.c get_next_line/get_next_line.c get_next_line/get_next_line_utils.c
@@ -33,7 +33,7 @@ $(NAME): $(OBJ)
 
 all: $(NAME)
 
-clean: 
+clean:
 	rm -f *.o ft_printf/*.o get_next_line/*.o
 
 fclean: clean

@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/03/07 09:14:07 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:31:51 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,53 @@
 void	ft_wait_children(t_data *data, pid_t *pids)
 {
 	int	i;
+	int	status;
 
 	i = 0;
-	while (i <= data->cmd_count)
+	if (pids)
 	{
-		waitpid(pids[i], NULL, 0);
-		i++;
+		while (i <= data->cmd_count)
+		{
+			if (pids[i] > 0)
+				waitpid(pids[i], &status, 0);
+			i++;
+		}
+		free(pids);
 	}
-	free(pids);
 	if (data->prev_pipe != -1)
 		close(data->prev_pipe);
 }
 
-void	ft_handle_pipes(t_data *data, int pipefd[2], int command)
+/* ************************************************************************** */
+/*                                                                            */
+/*   Manages pipe and redirection setup for command execution                */
+/*   Handles input from heredocs, files, or previous pipes                   */
+/*   Sets up output redirections to files or pipes                           */
+/*   Ensures proper synchronization of heredoc processing                    */
+/* ************************************************************************** */
+void	ft_handle_heredoc(t_data *data, t_command cmd, int cmd_index)
 {
-	if (data->prev_pipe != -1)
+	int	heredoc_pipe[2];
+
+	ft_get_delim_buf(&cmd, cmd.redir.delim);
+	if (cmd_index < data->cmd_count)
 	{
-		dup2(data->prev_pipe, STDIN_FILENO);
-		close(data->prev_pipe);
+		write(data->heredoc_sync[cmd_index][1], "", 1);
+		close(data->heredoc_sync[cmd_index][1]);
 	}
-	if (command < data->cmd_count)
+	if (cmd.redir.delim_buf)
 	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[1]);
+		if (pipe(heredoc_pipe) == -1)
+		{
+			perror("pipe");
+			return ;
+		}
+		write(heredoc_pipe[1], cmd.redir.delim_buf,
+			ft_strlen(cmd.redir.delim_buf));
+		close(heredoc_pipe[1]);
+		dup2(heredoc_pipe[0], STDIN_FILENO);
+		close(heredoc_pipe[0]);
 	}
-	if (command < data->cmd_count)
-		close(pipefd[0]);
 }
 
 void	ft_setup_pipes(int pipefd[2])
