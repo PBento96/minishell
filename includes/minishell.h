@@ -163,4 +163,6 @@ t_token	ft_parse_token(char **ptr, t_data *data);
 int		ft_handle_quotes_in_input(t_data *data);
 void	swap_strings(char **a, char **b);
 int		var_exists(char **env, char *var);
+
+void	ft_free_tokens(t_data *data);
 #endif

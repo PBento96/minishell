@@ -94,6 +94,8 @@ char	*ft_remove_quotes(char *str)
  */
 int	handle_quotes(char **ptr, int *in_quotes, char *quote_type)
 {
+	if (!ptr || !*ptr || !**ptr)
+		return (0);
 	if ((**ptr == '\'' || **ptr == '\"') && !*in_quotes)
 	{
 		*in_quotes = 1;
@@ -104,6 +106,7 @@ int	handle_quotes(char **ptr, int *in_quotes, char *quote_type)
 	else if (*in_quotes && **ptr == *quote_type)
 	{
 		*in_quotes = 0;
+		*quote_type = '\0';
 		(*ptr)++;
 		return (1);
 	}

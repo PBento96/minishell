@@ -25,6 +25,13 @@ void	ft_process_input(t_data *data)
 	int	i;
 
 	i = 0;
+	if (!ft_handle_quotes_in_input(data))
+	{
+		if (data->input)
+			ft_free((void **)&data->input);
+		return ;
+	}
+	i = 0;
 	while (ft_isspace(data->input[i]) && data->input[i] != '\0')
 	{
 		if (data->input[i] == '\t')
@@ -63,10 +70,7 @@ static void	ft_iohandler(t_data *data)
 	ft_strlcat(prompt, " > "RESET_COLOR, sizeof(prompt));
 	data->input = readline(prompt);
 	if (!data->input)
-	{
-		write(1, "exit\n", 5);
 		ft_shutdown(&data, OK);
-	}
 	ft_process_input(data);
 }
 
@@ -109,12 +113,12 @@ int	main(int argc, char **argv, char **env)
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGINT);
 	sigaddset(&sa.sa_mask, SIGQUIT);
-	sigaddset(&sa.sa_mask, SIGTERM);
 	sa.sa_sigaction = &ft_sighandler;
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
 	sigaction(SIGQUIT, &sa, NULL);
-	sigaction(SIGTERM, &sa, NULL);
 	rl_bind_key('\t', &ft_tab_handler);
 	while (!g_signal)
 		ft_iohandler(data);

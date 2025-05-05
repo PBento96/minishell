@@ -95,6 +95,7 @@ static void	ft_cleanup_execution(t_data *data)
 		i++;
 	}
 	data->pids = NULL;
+	ft_free_tokens(data);
 }
 
 /* ************************************************************************** */
