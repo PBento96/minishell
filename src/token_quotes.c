@@ -12,33 +12,90 @@
 
 #include "minishell.h"
 
-static int	ft_is_quote_balanced(const char *str)
+/* Function to check if quotes in a string are properly balanced
+ * Counts single and double quotes ensuring none are left unclosed
+ * Returns 1 if balanced, 0 otherwise
+ */
+int	ft_is_quotes_balanced(const char *str)
 {
-	int	single_quotes;
-	int	double_quotes;
+	int	in_single_quotes;
+	int	in_double_quotes;
 	int	i;
 
-	single_quotes = 0;
-	double_quotes = 0;
+	if (!str)
+		return (1);
+	in_single_quotes = 0;
+	in_double_quotes = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '\'' && !(double_quotes % 2))
-			single_quotes++;
-		else if (str[i] == '\"' && !(single_quotes % 2))
-			double_quotes++;
+		if (str[i] == '\'' && !in_double_quotes)
+			in_single_quotes = !in_single_quotes;
+		else if (str[i] == '\"' && !in_single_quotes)
+			in_double_quotes = !in_double_quotes;
 		i++;
 	}
-	return ((single_quotes % 2 == 0) && (double_quotes % 2 == 0));
+	return (!in_single_quotes && !in_double_quotes);
 }
 
+/* Function to join three strings together
+ * Allocates memory for the resulting string
+ * Returns newly allocated string, NULL if allocation fails
+ */
+char	*ft_strjoin3(char const *s1, char const *s2, char const *s3)
+{
+	char	*result;
+	size_t	len1;
+	size_t	len2;
+	size_t	len3;
+
+	if (!s1 || !s2 || !s3)
+		return (NULL);
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	len3 = ft_strlen(s3);
+	result = (char *)malloc(len1 + len2 + len3 + 1);
+	if (!result)
+		return (NULL);
+	ft_strlcpy(result, s1, len1 + 1);
+	ft_strlcpy(result + len1, s2, len2 + 1);
+	ft_strlcpy(result + len1 + len2, s3, len3 + 1);
+	return (result);
+}
+
+/* Function to handle unclosed quotes in input
+ * If quotes are unbalanced, prompts for additional input until quotes are closed
+ * Returns 1 if processing successful, 0 if error occurred
+ */
 int	ft_handle_quotes_in_input(t_data *data)
 {
-	if (!ft_is_quote_balanced(data->input))
+	char	*additional_input;
+	char	*temp;
+	char	*prompt;
+
+	if (ft_is_quotes_balanced(data->input))
+		return (1);
+	prompt = "> ";
+	while (!ft_is_quotes_balanced(data->input))
 	{
-		ft_putendl_fd("minishell: unclosed quotes detected", 2);
-		data->status = 1;
-		return (0);
+		additional_input = readline(prompt);
+		if (!additional_input)
+		{
+			ft_putendl_fd("minishell: unexpected EOF while looking for"
+				" matching quote", 2);
+			data->status = 1;
+			return (0);
+		}
+		temp = data->input;
+		data->input = ft_strjoin3(data->input, "\n", additional_input);
+		free(temp);
+		free(additional_input);
+		if (!data->input)
+		{
+			ft_putendl_fd("minishell: memory allocation error", 2);
+			data->status = 1;
+			return (0);
+		}
 	}
 	return (1);
 }

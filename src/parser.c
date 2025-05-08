@@ -19,8 +19,9 @@
  */
 static int	is_word_boundary(char c, int in_quotes)
 {
-	return (!in_quotes && (ft_isspace(c)
-			|| c == '|' || c == '>' || c == '<'));
+    if (in_quotes)
+        return (0);
+    return (ft_isspace(c) || c == '|' || c == '>' || c == '<');
 }
 
 /* Function to extract, expand and process a word

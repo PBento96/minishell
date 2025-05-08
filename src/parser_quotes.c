@@ -123,12 +123,15 @@ char	*handle_quote(char *word, int *i, char *result, int *in_quotes)
 	char	quote;
 
 	quote = word[*i];
-	if ((quote == '\'' && !in_quotes[1]) || (quote == '\"' && !in_quotes[0]))
+	if (quote == '\'' || quote == '\"')
 	{
-		if (quote == '\'')
-			in_quotes[0] = !in_quotes[0];
-		else
-			in_quotes[1] = !in_quotes[1];
+		if ((quote == '\'' && !in_quotes[1]) || (quote == '\"' && !in_quotes[0]))
+		{
+			if (quote == '\'')
+				in_quotes[0] = !in_quotes[0];
+			else
+				in_quotes[1] = !in_quotes[1];
+		}
 		result = append_char(result, word[*i]);
 		(*i)++;
 	}
