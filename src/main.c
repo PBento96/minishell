@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/12 20:48:26 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 22:25:23 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ static void	ft_sighandler(int signum, siginfo_t *info, void *context)
 {
 	(void)info;
 	(void)context;
+	g_signal = signum;
 	if (signum == SIGINT)
 	{
 		write(1, "\n", 1);
@@ -121,7 +122,7 @@ int	main(int argc, char **argv, char **env)
 	sa.sa_flags = 0;
 	sigaction(SIGQUIT, &sa, NULL);
 	rl_bind_key('\t', &ft_tab_handler);
-	while (!g_signal)
+	while (true)
 		ft_iohandler(data);
 	ft_shutdown(&data, OK);
 }

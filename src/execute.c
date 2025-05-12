@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:12:24 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 22:25:32 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	ft_execute(t_data *data)
 	if (!data->pids)
 		return ;
 	data->prev_pipe = -1;
-	while (++cmd_index < data->cmd_count + 1 && !g_signal)
+	while (++cmd_index < data->cmd_count + 1)
 	{
 		ft_prepare_command(data, cmd_index, &cmd_args);
 		if (data->cmd_count == 0 && data->commands[cmd_index]
