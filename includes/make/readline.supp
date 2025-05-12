@@ -1,0 +1,8 @@
+# Suppress readline leaks
+{
+   readline_leak
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}

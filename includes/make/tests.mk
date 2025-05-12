@@ -119,7 +119,7 @@ run:
 		printf "%-8s ${C_GREEN}[COMPLETED]${RESET_ALL}\n" "Build"; \
 		${MAKE} -s clean; \
 		echo "Runing with Valgrind..."; \
-		${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}; \
+		${VALGRIND} --suppressions=includes/make/readline.supp ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}; \
 		${MAKE} -s print_valgrind_results; \
 	fi
 
@@ -157,10 +157,10 @@ print_valgrind_results:
 		printf "${C_GREEN}NO POSSIBLE LEAKS${RESET_ALL}\n"; \
 	fi; \
 	if [ "$$(echo $$LEAK_REA | awk '{print $$1}')" != "0" ]; then \
-		printf "${C_YELLOW}WARNING: Valgrind - %s bytes in %s blocks still reachable!${RESET_ALL}\n" $$LEAK_REA; \
+		printf "${C_BRT_BLACK}WARNING: Valgrind - %s bytes in %s blocks still reachable!${RESET_ALL}\n" $$LEAK_REA; \
 	else \
 		printf "${C_GREEN}NO REACHABLE LEAKS${RESET_ALL}\n"; \
 	fi; \
 	if [ "$$(echo $$SUPPRESSED_LEAKS | awk '{print $$1}')" != "0" ]; then \
-		printf "${C_YELLOW}WARNING: Valgrind - %s bytes in %s blocks suppressed!${RESET_ALL}\n" $$SUPPRESSED_LEAKS; \
+		printf "${C_BRT_BLACK}WARNING: Valgrind - %s bytes in %s blocks suppressed!${RESET_ALL}\n" $$SUPPRESSED_LEAKS; \
 	fi;
