@@ -1,8 +1,72 @@
-# Suppress readline leaks
+# Suppress readline malloc leaks
 {
    readline_leak
    Memcheck:Leak
    fun:malloc
    ...
    obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}
+# Suppress readline realloc leaks
+{
+   readline_realloc
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}
+# Suppress readline calloc leaks
+{
+   readline_calloc
+   Memcheck:Leak
+   fun:calloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}
+# Suppress readline still reachable (malloc)
+{
+   readline_still_reachable_malloc
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}
+# Suppress readline still reachable (realloc)
+{
+   readline_still_reachable_realloc
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}
+# Suppress readline still reachable (calloc)
+{
+   readline_still_reachable_calloc
+   Memcheck:Leak
+   fun:calloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libreadline*
+}
+# Suppress libtinfo malloc leaks
+{
+   readline_tinfo_malloc
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo*
+}
+# Suppress libtinfo realloc leaks
+{
+   readline_tinfo_realloc
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo*
+}
+# Suppress libtinfo calloc leaks
+{
+   readline_tinfo_calloc
+   Memcheck:Leak
+   fun:calloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo*
 }
