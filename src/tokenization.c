@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:21:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:43:19 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ void	ft_tokenize_input(t_data *data)
 	int		count;
 
 	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
-	if (!ft_handle_quotes_in_input(data))
-		return ;
 	ptr = data->input;
 	count = 0;
 	data->cmd_count = 0;

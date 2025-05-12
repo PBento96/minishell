@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:01:43 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:41:32 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
  */
 static int	is_word_boundary(char c, int in_quotes)
 {
-    if (in_quotes)
-        return (0);
-    return (ft_isspace(c) || c == '|' || c == '>' || c == '<');
+	if (in_quotes)
+		return (0);
+	return (ft_isspace(c) || c == '|' || c == '>' || c == '<');
 }
 
 /* Function to extract, expand and process a word

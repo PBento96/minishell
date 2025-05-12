@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/28 14:51:27 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:48:26 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@ void	ft_process_input(t_data *data)
 	int	i;
 
 	i = 0;
-	if (!ft_handle_quotes_in_input(data))
+	if (!ft_is_quotes_balanced(data->input))
 	{
 		if (data->input)
 			ft_free((void **)&data->input);
+		ft_printf(C_RED"Invalid Input - Unclosed Quotes\n"RESET_ALL);
 		return ;
 	}
 	i = 0;

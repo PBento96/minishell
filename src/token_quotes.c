@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:35:05 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 19:34:11 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*ft_strjoin3(char const *s1, char const *s2, char const *s3)
 /* Function to handle unclosed quotes in input
  * If quotes are unbalanced, prompts for additional input until quotes are closed
  * Returns 1 if processing successful, 0 if error occurred
- */
+
 int	ft_handle_quotes_in_input(t_data *data)
 {
 	char	*additional_input;
@@ -99,3 +99,4 @@ int	ft_handle_quotes_in_input(t_data *data)
 	}
 	return (1);
 }
+	*/
