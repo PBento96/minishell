@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:44:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/15 21:08:07 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,23 @@ static void	process_var_with_equal(t_data *data, char *var)
 static void	process_var_no_equal(t_data *data, char *var)
 {
 	int		count;
+	char	*temp;
 
 	if (var_exists(data->env, var))
 		return ;
 	count = 0;
+	temp = var;
+	while (*temp)
+	{
+		if ((!ft_isalnum(*temp) || !ft_isalpha(*temp)) && *temp != '_')
+		{
+			write(2, "minishell: export: `", 20);
+			write(2, var, ft_strlen(var));
+			write(2, "': not a valid identifier\n", 26);
+			return ;
+		}
+		temp++;
+	}
 	while (data->env[count])
 		count++;
 	add_env_variable(data, var, count);
