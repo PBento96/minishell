@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/15 21:08:07 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:03:30 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,17 @@ static void	process_var_no_equal(t_data *data, char *var)
 		return ;
 	count = 0;
 	temp = var;
+	if (ft_isdigit(*temp))
+	{
+		write(2, "minishell: export: `", 20);
+		write(2, var, ft_strlen(var));
+		write(2, "': not a valid identifier\n", 26);
+		return ;
+	}
+	temp++;
 	while (*temp)
 	{
-		if ((!ft_isalnum(*temp) || !ft_isalpha(*temp)) && *temp != '_')
+		if ((!ft_isalnum(*temp)) && *temp != '_')
 		{
 			write(2, "minishell: export: `", 20);
 			write(2, var, ft_strlen(var));
