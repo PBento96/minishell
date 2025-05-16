@@ -33,6 +33,7 @@ void	ft_process_input(t_data *data)
 		return ;
 	}
 	i = 0;
+	add_history(data->input);
 	while (ft_isspace(data->input[i]) && data->input[i] != '\0')
 	{
 		if (data->input[i] == '\t')
@@ -50,7 +51,6 @@ void	ft_process_input(t_data *data)
 			data->input[i] = ' ';
 		i++;
 	}
-	add_history(data->input);
 	ft_tokenize_input(data);
 	ft_execute(data);
 	ft_free((void **) &(data->input));
