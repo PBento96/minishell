@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:36:58 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:56:11 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,12 @@ void	ft_exit(t_data *data, char **cmd_args)
 
 	write(1, "exit\n", 5);
 	exit_status = 0;
-	if (!cmd_args[1])
+	if (!cmd_args[1] && data->piped == 0)
+	{
+		ft_free_cmd(data,cmd_args);
+		ft_cleanup_execution(data);
 		ft_shutdown(&data, (unsigned char)exit_status);
+	}
 	if (!is_numeric_arg(cmd_args[1], &exit_status))
 		handle_exit_error(cmd_args[1]);
 	if (cmd_args[2])
@@ -65,6 +69,4 @@ void	ft_exit(t_data *data, char **cmd_args)
 		data->status = 1;
 		return ;
 	}
-	if (data->piped == 0)
-		ft_shutdown(&data, (unsigned char)exit_status);
 }

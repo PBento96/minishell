@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/12 22:25:32 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:56:15 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static void	ft_setup_heredoc_sync(t_data *data)
 /*   Waits for child processes to complete                                   */
 /*   Closes any redirected file descriptors                                  */
 /* ************************************************************************** */
-static void	ft_cleanup_execution(t_data *data)
+void	ft_cleanup_execution(t_data *data)
 {
 	int	i;
 

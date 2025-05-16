@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/12 20:06:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:43:44 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,4 +166,5 @@ int		var_exists(char **env, char *var);
 
 void	ft_free_tokens(t_data *data);
 int		ft_is_quotes_balanced(const char *str);
+void	ft_cleanup_execution(t_data *data);
 #endif
