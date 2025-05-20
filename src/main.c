@@ -24,12 +24,12 @@ void	ft_process_input(t_data *data)
 {
 	int	i;
 
-	i = 0;
 	if (!ft_is_quotes_balanced(data->input))
 	{
+		ft_printf(C_RED"Invalid Input - Unclosed Quotes\n"RESET_ALL);
+		data->status = 1;
 		if (data->input)
 			ft_free((void **)&data->input);
-		ft_printf(C_RED"Invalid Input - Unclosed Quotes\n"RESET_ALL);
 		return ;
 	}
 	i = 0;
