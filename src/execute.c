@@ -111,12 +111,19 @@ void	ft_execute(t_data *data)
 	int		pipefd[2];
 	int		cmd_index;
 	char	**cmd_args;
+	int		i;
 
 	ft_setup_heredoc_sync(data);
 	cmd_index = -1;
 	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
 	if (!data->pids)
 		return ;
+	i = 0;
+	while (i <= data->cmd_count)
+	{
+		data->pids[i] = -1;
+		i++;
+	}
 	data->prev_pipe = -1;
 	while (++cmd_index < data->cmd_count + 1)
 	{
