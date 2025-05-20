@@ -19,10 +19,15 @@
 /*   For external commands, uses execve with proper path                     */
 /*   Handles cleanup and exits the child process when done                   */
 /* ************************************************************************** */
-void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
+void ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
+	int exit_status = EXIT_SUCCESS;
+
 	if (type == BUILTIN)
+	{
 		ft_execute_builtin(data, cmd_args);
+		exit_status = data->status;
+	}
 	else
 	{
 		if (data->cmd_path == NULL)
@@ -34,14 +39,12 @@ void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 		if (execve(data->cmd_path, cmd_args, data->env))
 		{
 			perror("execve");
-			ft_free((void **)&data->cmd_path);
-			ft_free_array((void **)cmd_args);
-			exit(EXIT_FAILURE);
+			exit_status = EXIT_FAILURE;
 		}
 	}
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
-	exit(EXIT_FAILURE);
+	exit(exit_status);
 }
 
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
