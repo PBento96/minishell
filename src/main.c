@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/12 22:25:23 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:32:56 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	ft_process_input(t_data *data)
 			data->input[i] = ' ';
 		i++;
 	}
-	ft_tokenize_input(data);
-	ft_execute(data);
+	if (!ft_tokenize_input(data))
+		ft_execute(data);
 	ft_free((void **) &(data->input));
 }
 

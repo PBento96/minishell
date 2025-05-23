@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/12 20:43:19 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:32:54 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*ft_skip_whitespace(char *ptr)
 	return (ptr);
 }
 
-void	ft_tokenize_input(t_data *data)
+int	ft_tokenize_input(t_data *data)
 {
 	t_token	token;
 	char	*ptr;
@@ -61,10 +61,25 @@ void	ft_tokenize_input(t_data *data)
 	while (*ptr)
 	{
 		token = ft_parse_token(&ptr, data);
-		if (token.value && token.type != PIPE)
-			ft_add_token_to_command(data, token, &count);
-		if (token.type == PIPE)
-			ft_handle_pipe_token(data, &count);
+		if (token.value)
+		{
+			if (token.type == PIPE)
+			{
+				if (count == 0 || !*ft_skip_whitespace(ptr))
+				{
+					ft_printf(C_RED"syntax error near unexpected token `|'\n"
+						RESET_ALL);
+					ft_free((void **)&token.value);
+					data->status = 258;
+					return (NOK);
+				}
+				ft_free((void **)&token.value);
+				ft_handle_pipe_token(data, &count);
+			}
+			else
+				ft_add_token_to_command(data, token, &count);
+		}
 		ptr = ft_skip_whitespace(ptr);
 	}
+	return (OK);
 }

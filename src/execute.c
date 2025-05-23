@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/16 13:56:15 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:27:11 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,21 @@ static void	ft_setup_heredoc_sync(t_data *data)
 
 /* ************************************************************************** */
 /*                                                                            */
+/*   Safely closes a file descriptor if it's valid                           */
+/*   Updates the descriptor to -1 after closing to prevent double closing    */
+/*   Ignores descriptors that are already set to -1                          */
+/* ************************************************************************** */
+void	ft_safe_close(int *fd)
+{
+	if (fd && *fd >= 0)
+	{
+		close(*fd);
+		*fd = -1;
+	}
+}
+
+/* ************************************************************************** */
+/*                                                                            */
 /*   Performs cleanup operations after command execution                     */
 /*   Closes heredoc synchronization pipes                                    */
 /*   Waits for child processes to complete                                   */
@@ -86,8 +101,8 @@ void	ft_cleanup_execution(t_data *data)
 	i = 0;
 	while (i < data->cmd_count)
 	{
-		close(data->heredoc_sync[i][0]);
-		close(data->heredoc_sync[i][1]);
+		ft_safe_close(&data->heredoc_sync[i][0]);
+		ft_safe_close(&data->heredoc_sync[i][1]);
 		i++;
 	}
 	ft_wait_children(data, data->pids);

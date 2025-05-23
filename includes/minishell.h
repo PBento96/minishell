@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/16 13:43:44 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:33:23 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ typedef struct s_data
 extern int	g_signal;
 
 //	Parsing
-void	ft_tokenize_input(t_data *data);
+int		ft_tokenize_input(t_data *data);
 char	*ft_parse_word(char **ptr, t_data *data);
 bool	ft_is_builtin(const char *command);
 char	**ft_tokens_to_args(t_command *command);
@@ -156,7 +156,6 @@ char	*ft_remove_quotes(char *str);
 int		handle_quotes(char **ptr, int *in_quotes, char *quote_type);
 char	*handle_quote(char *word, int *i, char *result, int *in_quotes);
 char	*append_char(char *str, char c);
-void	ft_tokenize_input(t_data *data);
 void	ft_free_cmd(t_data *data, char **cmd_args);
 char	*ft_skip_whitespace(char *ptr);
 t_token	ft_parse_token(char **ptr, t_data *data);
@@ -167,4 +166,5 @@ int		var_exists(char **env, char *var);
 void	ft_free_tokens(t_data *data);
 int		ft_is_quotes_balanced(const char *str);
 void	ft_cleanup_execution(t_data *data);
+void	ft_safe_close(int *fd);
 #endif
