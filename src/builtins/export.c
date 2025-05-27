@@ -86,9 +86,7 @@ static void	process_var_no_equal(t_data *data, char *var)
 	temp = var;
 	if (ft_isdigit(*temp))
 	{
-		write(2, "minishell: export: `", 20);
-		write(2, var, ft_strlen(var));
-		write(2, "': not a valid identifier\n", 26);
+		write_error_message(var);
 		return ;
 	}
 	temp++;
@@ -96,9 +94,7 @@ static void	process_var_no_equal(t_data *data, char *var)
 	{
 		if ((!ft_isalnum(*temp)) && *temp != '_')
 		{
-			write(2, "minishell: export: `", 20);
-			write(2, var, ft_strlen(var));
-			write(2, "': not a valid identifier\n", 26);
+			write_error_message(var);
 			return ;
 		}
 		temp++;

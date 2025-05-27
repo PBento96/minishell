@@ -14,34 +14,6 @@
 
 int	g_signal = 0;
 
-/* Function to replace tabs with spaces in the input string
- * Processes the input string in-place
- * Returns the position after leading whitespaces
- */
-static int	ft_replace_tabs(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (ft_isspace(str[i]) && str[i] != '\0')
-	{
-		if (str[i] == '\t')
-			str[i] = ' ';
-		i++;
-	}
-	if (str[i] != '\n' && str[i] != '\0')
-	{
-		while (str[i] != '\0')
-		{
-			if (str[i] == '\t')
-				str[i] = ' ';
-			i++;
-		}
-		return (1);
-	}
-	return (0);
-}
-
 /* Input first spa treatment                   */
 /* Closes the input if it ends with newline    */
 /* If there's no input just shows newline      */

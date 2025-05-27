@@ -28,6 +28,21 @@ static void	ft_create_child_process(t_data *data, int pipefd[2],
 	}
 }
 
+/* ************************************************************************** */
+/*                                                                            */
+/*   Safely closes a file descriptor if it's valid                           */
+/*   Updates the descriptor to -1 after closing to prevent double closing    */
+/*   Ignores descriptors that are already set to -1                          */
+/* ************************************************************************** */
+void	ft_safe_close(int *fd)
+{
+	if (fd && *fd >= 0)
+	{
+		close(*fd);
+		*fd = -1;
+	}
+}
+
 static void	ft_handle_parent(t_data *data, int pipefd[2], int cmd_index)
 {
 	if (cmd_index < data->cmd_count)
@@ -91,5 +106,5 @@ void	ft_execute_lone_builtin(t_data *data, int cmd_index, char **cmd_args)
 	close(original_stdout);
 	write(1, "Executing Lone Builtin\n", 23);
 	ft_execute_builtin(data, cmd_args);
-    data->status = 0;
+	data->status = 0;
 }

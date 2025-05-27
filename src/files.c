@@ -42,8 +42,8 @@ void	ft_open_redirect_fds(t_redir *redir, const char *in, const char *out)
 /* ************************************************************************** */
 void	ft_close_redirect_fds(t_redir *redir)
 {
-    if (redir->in_fd != STDIN_FILENO)
-        ft_safe_close(&redir->in_fd);
-    if (redir->out_fd != STDOUT_FILENO)
-        ft_safe_close(&redir->out_fd);
+	if (redir->in_fd != STDIN_FILENO)
+		ft_safe_close(&redir->in_fd);
+	if (redir->out_fd != STDOUT_FILENO)
+		ft_safe_close(&redir->out_fd);
 }

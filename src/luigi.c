@@ -41,7 +41,7 @@ static void	ft_handle_input(t_data *data, t_command cmd, int cmd_index)
 /*   Properly closes original file descriptors after duplication             */
 /* ************************************************************************** */
 static void	ft_handle_output(t_data *data, t_command cmd,
-							int pipefd[2], int cmd_index)
+	int pipefd[2], int cmd_index)
 {
 	if (cmd.redir.out_fd != STDOUT_FILENO)
 	{

@@ -57,7 +57,7 @@ void	ft_exit(t_data *data, char **cmd_args)
 	exit_status = 0;
 	if (!cmd_args[1] && data->piped == 0)
 	{
-		ft_free_cmd(data,cmd_args);
+		ft_free_cmd(data, cmd_args);
 		ft_cleanup_execution(data);
 		ft_shutdown(&data, (unsigned char)exit_status);
 	}

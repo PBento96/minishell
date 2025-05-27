@@ -167,4 +167,6 @@ void	ft_free_tokens(t_data *data);
 int		ft_is_quotes_balanced(const char *str);
 void	ft_cleanup_execution(t_data *data);
 void	ft_safe_close(int *fd);
+void	write_error_message(char *var);
+int		ft_replace_tabs(char *str);
 #endif

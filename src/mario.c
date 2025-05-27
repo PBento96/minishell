@@ -27,12 +27,10 @@ void	ft_wait_children(t_data *data, pid_t *pids)
 				waitpid(pids[i], &status, 0);
 				if (i == data->cmd_count)
 				{
-					if (WIFEXITED(status))
-						data->status = WEXITSTATUS(status);
-					else if (WIFSIGNALED(status))
-						data->status = 128 + WTERMSIG(status);
+					if (status & 0x7F)
+						data->status = 128 + (status & 0x7F);
 					else
-						data->status = 1;
+						data->status = (status >> 8) & 0xFF;
 				}
 			}
 			i++;

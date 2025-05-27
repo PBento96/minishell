@@ -19,9 +19,9 @@
 /*   For external commands, uses execve with proper path                     */
 /*   Handles cleanup and exits the child process when done                   */
 /* ************************************************************************** */
-void ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
+void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
-	int exit_status = EXIT_SUCCESS;
+	int	exit_status;
 
 	if (type == BUILTIN)
 	{
@@ -37,11 +37,9 @@ void ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 			data->status = 127;
 			exit(EXIT_FAILURE);
 		}
-		if ((data->status = execve(data->cmd_path, cmd_args, data->env)))
-		{
-			perror("execve");
-			exit_status = EXIT_FAILURE;
-		}
+		execve(data->cmd_path, cmd_args, data->env);
+		perror("execve");
+		exit_status = EXIT_FAILURE;
 	}
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
@@ -70,21 +68,6 @@ static void	ft_setup_heredoc_sync(t_data *data)
 	{
 		pipe(data->heredoc_sync[i]);
 		i++;
-	}
-}
-
-/* ************************************************************************** */
-/*                                                                            */
-/*   Safely closes a file descriptor if it's valid                           */
-/*   Updates the descriptor to -1 after closing to prevent double closing    */
-/*   Ignores descriptors that are already set to -1                          */
-/* ************************************************************************** */
-void	ft_safe_close(int *fd)
-{
-	if (fd && *fd >= 0)
-	{
-		close(*fd);
-		*fd = -1;
 	}
 }
 
@@ -130,7 +113,6 @@ void	ft_execute(t_data *data)
 	int		pipefd[2];
 	int		cmd_index;
 	char	**cmd_args;
-
 
 	ft_setup_heredoc_sync(data);
 	cmd_index = -1;
