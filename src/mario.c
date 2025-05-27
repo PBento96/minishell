@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mario.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/12 22:33:28 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/05/27 12:04:48 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,18 @@ void	ft_wait_children(t_data *data, pid_t *pids)
 		while (i <= data->cmd_count)
 		{
 			if (pids[i] > 0)
-            {
-                waitpid(pids[i], &status, 0);
+			{
+				waitpid(pids[i], &status, 0);
 				if (i == data->cmd_count)
-                {
-                    if (WIFEXITED(status))
-                        data->status = WEXITSTATUS(status);
-                    else if (WIFSIGNALED(status))
-                        data->status = 128 + WTERMSIG(status);
-                    else
-                        data->status = 1;
-                }
-            }
+				{
+					if (WIFEXITED(status))
+						data->status = WEXITSTATUS(status);
+					else if (WIFSIGNALED(status))
+						data->status = 128 + WTERMSIG(status);
+					else
+						data->status = 1;
+				}
+			}
 			i++;
 		}
 		free(pids);

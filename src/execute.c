@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/27 11:10:25 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:42:42 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,19 +130,16 @@ void	ft_execute(t_data *data)
 	int		pipefd[2];
 	int		cmd_index;
 	char	**cmd_args;
-	int		i;
+
 
 	ft_setup_heredoc_sync(data);
 	cmd_index = -1;
 	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
 	if (!data->pids)
 		return ;
-	i = 0;
-	while (i <= data->cmd_count)
-	{
-		data->pids[i] = -1;
-		i++;
-	}
+	while (++cmd_index <= data->cmd_count)
+		data->pids[cmd_index] = -1;
+	cmd_index = -1;
 	data->prev_pipe = -1;
 	while (++cmd_index < data->cmd_count + 1)
 	{

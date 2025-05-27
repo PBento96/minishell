@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/12 19:34:11 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 12:07:58 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,41 +62,3 @@ char	*ft_strjoin3(char const *s1, char const *s2, char const *s3)
 	ft_strlcpy(result + len1 + len2, s3, len3 + 1);
 	return (result);
 }
-
-/* Function to handle unclosed quotes in input
- * If quotes are unbalanced, prompts for additional input until quotes are closed
- * Returns 1 if processing successful, 0 if error occurred
-
-int	ft_handle_quotes_in_input(t_data *data)
-{
-	char	*additional_input;
-	char	*temp;
-	char	*prompt;
-
-	if (ft_is_quotes_balanced(data->input))
-		return (1);
-	prompt = "> ";
-	while (!ft_is_quotes_balanced(data->input))
-	{
-		additional_input = readline(prompt);
-		if (!additional_input)
-		{
-			ft_putendl_fd("minishell: unexpected EOF while looking for"
-				" matching quote", 2);
-			data->status = 1;
-			return (0);
-		}
-		temp = data->input;
-		data->input = ft_strjoin3(data->input, "\n", additional_input);
-		free(temp);
-		free(additional_input);
-		if (!data->input)
-		{
-			ft_putendl_fd("minishell: memory allocation error", 2);
-			data->status = 1;
-			return (0);
-		}
-	}
-	return (1);
-}
-	*/

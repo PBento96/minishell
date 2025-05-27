@@ -6,13 +6,41 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/23 20:32:56 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 12:16:25 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 int	g_signal = 0;
+
+/* Function to replace tabs with spaces in the input string
+ * Processes the input string in-place
+ * Returns the position after leading whitespaces
+ */
+static int	ft_replace_tabs(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (ft_isspace(str[i]) && str[i] != '\0')
+	{
+		if (str[i] == '\t')
+			str[i] = ' ';
+		i++;
+	}
+	if (str[i] != '\n' && str[i] != '\0')
+	{
+		while (str[i] != '\0')
+		{
+			if (str[i] == '\t')
+				str[i] = ' ';
+			i++;
+		}
+		return (1);
+	}
+	return (0);
+}
 
 /* Input first spa treatment                   */
 /* Closes the input if it ends with newline    */
@@ -22,8 +50,6 @@ int	g_signal = 0;
 
 void	ft_process_input(t_data *data)
 {
-	int	i;
-
 	if (!ft_is_quotes_balanced(data->input))
 	{
 		ft_printf(C_RED"Invalid Input - Unclosed Quotes\n"RESET_ALL);
@@ -32,24 +58,11 @@ void	ft_process_input(t_data *data)
 			ft_free((void **)&data->input);
 		return ;
 	}
-	i = 0;
 	add_history(data->input);
-	while (ft_isspace(data->input[i]) && data->input[i] != '\0')
-	{
-		if (data->input[i] == '\t')
-			data->input[i] = ' ';
-		i++;
-	}
-	if (data->input[i] == '\n' || data->input[i] == '\0')
+	if (!ft_replace_tabs(data->input))
 	{
 		ft_free((void **) &(data->input));
 		return ;
-	}
-	while (data->input[i] != '\0')
-	{
-		if (data->input[i] == '\t')
-			data->input[i] = ' ';
-		i++;
 	}
 	if (!ft_tokenize_input(data))
 		ft_execute(data);
