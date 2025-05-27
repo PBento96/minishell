@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/23 20:27:11 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:10:25 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,10 @@ void ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 		{
 			ft_printf(C_RED"%s: Command not found\n"RESET_ALL, cmd_args[0]);
 			ft_free_array((void **)cmd_args);
+			data->status = 127;
 			exit(EXIT_FAILURE);
 		}
-		if (execve(data->cmd_path, cmd_args, data->env))
+		if ((data->status = execve(data->cmd_path, cmd_args, data->env)))
 		{
 			perror("execve");
 			exit_status = EXIT_FAILURE;

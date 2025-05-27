@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/23 20:32:54 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:03:18 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	ft_tokenize_input(t_data *data)
 					ft_printf(C_RED"syntax error near unexpected token `|'\n"
 						RESET_ALL);
 					ft_free((void **)&token.value);
+					ft_free_tokens(data);
 					data->status = 258;
 					return (NOK);
 				}
