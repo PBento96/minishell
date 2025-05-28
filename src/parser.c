@@ -21,7 +21,7 @@ int	ft_replace_tabs(char *str)
 	int	i;
 
 	i = 0;
-	while (ft_isspace(str[i]) && str[i] != '\0')
+	while (str[i] != '\0' && ft_isspace(str[i]))
 	{
 		if (str[i] == '\t')
 			str[i] = ' ';
