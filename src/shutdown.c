@@ -18,7 +18,7 @@ void	ft_free_tokens(t_data *data)
 	int	j;
 
 	i = 0;
-	while (i <= data->cmd_count)
+	while (i < data->cmd_count)
 	{
 		j = 0;
 		while (j < data->commands[i].token_count)
