@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/27 12:16:25 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:53:57 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,9 @@ void	ft_process_input(t_data *data)
 		ft_free((void **) &(data->input));
 		return ;
 	}
-	if (!ft_tokenize_input(data))
+	ft_bzero(data->commands, MAX_PIPE_COUNT * sizeof(t_command));
+	data->cmd_count = 0;
+	if (!ft_tokenize_input(data, data->input, 0))
 		ft_execute(data);
 	ft_free((void **) &(data->input));
 }
