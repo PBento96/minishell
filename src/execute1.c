@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:21:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 22:27:20 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,21 @@ static void	ft_create_child_process(t_data *data, int pipefd[2],
 		ft_handle_pipes(data, pipefd, data->commands[cmd_index], cmd_index);
 		ft_execute_command(data, cmd_args,
 			data->commands[cmd_index].tokens->type);
+	}
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*   Safely closes a file descriptor if it's valid                           */
+/*   Updates the descriptor to -1 after closing to prevent double closing    */
+/*   Ignores descriptors that are already set to -1                          */
+/* ************************************************************************** */
+void	ft_safe_close(int *fd)
+{
+	if (fd && *fd >= 0)
+	{
+		close(*fd);
+		*fd = -1;
 	}
 }
 
@@ -91,4 +106,5 @@ void	ft_execute_lone_builtin(t_data *data, int cmd_index, char **cmd_args)
 	close(original_stdout);
 	write(1, "Executing Lone Builtin\n", 23);
 	ft_execute_builtin(data, cmd_args);
+	data->status = 0;
 }

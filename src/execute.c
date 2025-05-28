@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:12:24 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:42:42 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,27 +21,29 @@
 /* ************************************************************************** */
 void	ft_execute_command(t_data *data, char **cmd_args, t_token_type type)
 {
+	int	exit_status;
+
 	if (type == BUILTIN)
+	{
 		ft_execute_builtin(data, cmd_args);
+		exit_status = data->status;
+	}
 	else
 	{
 		if (data->cmd_path == NULL)
 		{
 			ft_printf(C_RED"%s: Command not found\n"RESET_ALL, cmd_args[0]);
 			ft_free_array((void **)cmd_args);
+			data->status = 127;
 			exit(EXIT_FAILURE);
 		}
-		if (execve(data->cmd_path, cmd_args, data->env))
-		{
-			perror("execve");
-			ft_free((void **)&data->cmd_path);
-			ft_free_array((void **)cmd_args);
-			exit(EXIT_FAILURE);
-		}
+		execve(data->cmd_path, cmd_args, data->env);
+		perror("execve");
+		exit_status = EXIT_FAILURE;
 	}
 	ft_free((void **)&data->cmd_path);
 	ft_free_array((void **)cmd_args);
-	exit(EXIT_FAILURE);
+	exit(exit_status);
 }
 
 static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
@@ -76,15 +78,15 @@ static void	ft_setup_heredoc_sync(t_data *data)
 /*   Waits for child processes to complete                                   */
 /*   Closes any redirected file descriptors                                  */
 /* ************************************************************************** */
-static void	ft_cleanup_execution(t_data *data)
+void	ft_cleanup_execution(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (i < data->cmd_count)
 	{
-		close(data->heredoc_sync[i][0]);
-		close(data->heredoc_sync[i][1]);
+		ft_safe_close(&data->heredoc_sync[i][0]);
+		ft_safe_close(&data->heredoc_sync[i][1]);
 		i++;
 	}
 	ft_wait_children(data, data->pids);
@@ -95,6 +97,7 @@ static void	ft_cleanup_execution(t_data *data)
 		i++;
 	}
 	data->pids = NULL;
+	ft_free_tokens(data);
 }
 
 /* ************************************************************************** */
@@ -116,8 +119,11 @@ void	ft_execute(t_data *data)
 	data->pids = malloc((data->cmd_count + 1) * sizeof(pid_t));
 	if (!data->pids)
 		return ;
+	while (++cmd_index <= data->cmd_count)
+		data->pids[cmd_index] = -1;
+	cmd_index = -1;
 	data->prev_pipe = -1;
-	while (++cmd_index < data->cmd_count + 1 && !g_signal)
+	while (++cmd_index < data->cmd_count + 1)
 	{
 		ft_prepare_command(data, cmd_index, &cmd_args);
 		if (data->cmd_count == 0 && data->commands[cmd_index]

@@ -6,39 +6,59 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:35:05 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 12:07:58 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	ft_is_quote_balanced(const char *str)
+/* Function to check if quotes in a string are properly balanced
+ * Counts single and double quotes ensuring none are left unclosed
+ * Returns 1 if balanced, 0 otherwise
+ */
+int	ft_is_quotes_balanced(const char *str)
 {
-	int	single_quotes;
-	int	double_quotes;
+	int	in_single_quotes;
+	int	in_double_quotes;
 	int	i;
 
-	single_quotes = 0;
-	double_quotes = 0;
+	if (!str)
+		return (1);
+	in_single_quotes = 0;
+	in_double_quotes = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '\'' && !(double_quotes % 2))
-			single_quotes++;
-		else if (str[i] == '\"' && !(single_quotes % 2))
-			double_quotes++;
+		if (str[i] == '\'' && !in_double_quotes)
+			in_single_quotes = !in_single_quotes;
+		else if (str[i] == '\"' && !in_single_quotes)
+			in_double_quotes = !in_double_quotes;
 		i++;
 	}
-	return ((single_quotes % 2 == 0) && (double_quotes % 2 == 0));
+	return (!in_single_quotes && !in_double_quotes);
 }
 
-int	ft_handle_quotes_in_input(t_data *data)
+/* Function to join three strings together
+ * Allocates memory for the resulting string
+ * Returns newly allocated string, NULL if allocation fails
+ */
+char	*ft_strjoin3(char const *s1, char const *s2, char const *s3)
 {
-	if (!ft_is_quote_balanced(data->input))
-	{
-		ft_putendl_fd("minishell: unclosed quotes detected", 2);
-		data->status = 1;
-		return (0);
-	}
-	return (1);
+	char	*result;
+	size_t	len1;
+	size_t	len2;
+	size_t	len3;
+
+	if (!s1 || !s2 || !s3)
+		return (NULL);
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	len3 = ft_strlen(s3);
+	result = (char *)malloc(len1 + len2 + len3 + 1);
+	if (!result)
+		return (NULL);
+	ft_strlcpy(result, s1, len1 + 1);
+	ft_strlcpy(result + len1, s2, len2 + 1);
+	ft_strlcpy(result + len1 + len2, s3, len3 + 1);
+	return (result);
 }

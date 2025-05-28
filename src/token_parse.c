@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+char	*ft_skip_whitespace(char *ptr)
+{
+	while (*ptr == ' ')
+		ptr++;
+	return (ptr);
+}
+
 static void	ft_parse_output_redir(char **ptr, t_token *token)
 {
 	if (*(*ptr + 1) == '>')

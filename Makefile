@@ -33,4 +33,4 @@ include	./includes/make/tests.mk
 
 .PHONY: all clean fclean re bonus init \
 	libft libft_clone libft_re libft_clean libft_fclean \
-	norm run print_valgrind_results compile_with_progress
+	norm run print_valgrind_results compile_with_progress urun

@@ -119,6 +119,25 @@ run:
 		printf "%-8s ${C_GREEN}[COMPLETED]${RESET_ALL}\n" "Build"; \
 		${MAKE} -s clean; \
 		echo "Runing with Valgrind..."; \
+		${VALGRIND} ${VALGRIND_SUPPRESS} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}; \
+		${MAKE} -s print_valgrind_results; \
+	fi
+
+urun:
+	@echo "Cleaning old files..."
+	@${MAKE} -s fclean
+	@echo "Running norminette checks..."
+	@${MAKE} -s norm
+	@echo "Compiling project..."
+	@${MAKE} -s compile_with_progress || exit 0
+	@if [ ! -f ${BIN_DIR}/${NAME} ]; then \
+		printf "%-8s ${C_RED}[FAILED]${RESET_ALL}\n" "Build"; \
+		${MAKE} -s fclean; \
+		exit 0; \
+	else \
+		printf "%-8s ${C_GREEN}[COMPLETED]${RESET_ALL}\n" "Build"; \
+		${MAKE} -s clean; \
+		echo "Runing with Valgrind (no suppressions)..."; \
 		${VALGRIND} ${VALGRIND_LOGS} ${BIN_DIR}/${NAME}; \
 		${MAKE} -s print_valgrind_results; \
 	fi
@@ -162,5 +181,5 @@ print_valgrind_results:
 		printf "${C_GREEN}NO REACHABLE LEAKS${RESET_ALL}\n"; \
 	fi; \
 	if [ "$$(echo $$SUPPRESSED_LEAKS | awk '{print $$1}')" != "0" ]; then \
-		printf "${C_YELLOW}WARNING: Valgrind - %s bytes in %s blocks suppressed!${RESET_ALL}\n" $$SUPPRESSED_LEAKS; \
+		printf "${C_BRT_BLACK}WARNING: Valgrind - %s bytes in %s blocks suppressed!${RESET_ALL}\n" $$SUPPRESSED_LEAKS; \
 	fi;

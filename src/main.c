@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:13 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/28 14:51:27 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/27 12:16:25 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,29 +22,22 @@ int	g_signal = 0;
 
 void	ft_process_input(t_data *data)
 {
-	int	i;
-
-	i = 0;
-	while (ft_isspace(data->input[i]) && data->input[i] != '\0')
+	if (!ft_is_quotes_balanced(data->input))
 	{
-		if (data->input[i] == '\t')
-			data->input[i] = ' ';
-		i++;
+		ft_printf(C_RED"Invalid Input - Unclosed Quotes\n"RESET_ALL);
+		data->status = 1;
+		if (data->input)
+			ft_free((void **)&data->input);
+		return ;
 	}
-	if (data->input[i] == '\n' || data->input[i] == '\0')
+	add_history(data->input);
+	if (!ft_replace_tabs(data->input))
 	{
 		ft_free((void **) &(data->input));
 		return ;
 	}
-	while (data->input[i] != '\0')
-	{
-		if (data->input[i] == '\t')
-			data->input[i] = ' ';
-		i++;
-	}
-	add_history(data->input);
-	ft_tokenize_input(data);
-	ft_execute(data);
+	if (!ft_tokenize_input(data))
+		ft_execute(data);
 	ft_free((void **) &(data->input));
 }
 
@@ -63,10 +56,7 @@ static void	ft_iohandler(t_data *data)
 	ft_strlcat(prompt, " > "RESET_COLOR, sizeof(prompt));
 	data->input = readline(prompt);
 	if (!data->input)
-	{
-		write(1, "exit\n", 5);
 		ft_shutdown(&data, OK);
-	}
 	ft_process_input(data);
 }
 
@@ -74,6 +64,7 @@ static void	ft_sighandler(int signum, siginfo_t *info, void *context)
 {
 	(void)info;
 	(void)context;
+	g_signal = signum;
 	if (signum == SIGINT)
 	{
 		write(1, "\n", 1);
@@ -109,14 +100,14 @@ int	main(int argc, char **argv, char **env)
 	sigemptyset(&sa.sa_mask);
 	sigaddset(&sa.sa_mask, SIGINT);
 	sigaddset(&sa.sa_mask, SIGQUIT);
-	sigaddset(&sa.sa_mask, SIGTERM);
 	sa.sa_sigaction = &ft_sighandler;
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
 	sigaction(SIGQUIT, &sa, NULL);
-	sigaction(SIGTERM, &sa, NULL);
 	rl_bind_key('\t', &ft_tab_handler);
-	while (!g_signal)
+	while (true)
 		ft_iohandler(data);
 	ft_shutdown(&data, OK);
 }

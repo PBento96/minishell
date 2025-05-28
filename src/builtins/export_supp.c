@@ -37,3 +37,10 @@ int	var_exists(char **env, char *var)
 	}
 	return (0);
 }
+
+void	write_error_message(char *var)
+{
+	write(2, "minishell: export: `", 20);
+	write(2, var, ft_strlen(var));
+	write(2, "': not a valid identifier\n", 26);
+}

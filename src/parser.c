@@ -6,11 +6,39 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:01:43 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:41:32 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+/* Function to replace tabs with spaces in the input string
+ * Processes the input string in-place
+ * Returns the position after leading whitespaces
+ */
+int	ft_replace_tabs(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0' && ft_isspace(str[i]))
+	{
+		if (str[i] == '\t')
+			str[i] = ' ';
+		i++;
+	}
+	if (str[i] != '\n' && str[i] != '\0')
+	{
+		while (str[i] != '\0')
+		{
+			if (str[i] == '\t')
+				str[i] = ' ';
+			i++;
+		}
+		return (1);
+	}
+	return (0);
+}
 
 /* Function to check if a character is a word boundary
  * Checks for spaces and special shell characters
@@ -19,8 +47,9 @@
  */
 static int	is_word_boundary(char c, int in_quotes)
 {
-	return (!in_quotes && (ft_isspace(c)
-			|| c == '|' || c == '>' || c == '<'));
+	if (in_quotes)
+		return (0);
+	return (ft_isspace(c) || c == '|' || c == '>' || c == '<');
 }
 
 /* Function to extract, expand and process a word

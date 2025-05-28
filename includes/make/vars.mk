@@ -21,12 +21,14 @@ LIBRARIES = ${LIBFT_DIR}/libft.a
 LIBFT_REPO = git@github.com:PBento96/libft.git
 
 ##	TESTERS
-VALGRIND		=	valgrind --leak-check=full --show-leak-kinds=all -s \
-	--track-origins=yes --trace-children=yes --error-limit=no --track-fds=yes
-VALGRIND_LOGS	=	--log-file=${VGRIND_LOGFILE}
-VGRIND_LOGFILE	=	$(shell pwd)/logs/valgrind.log
-GDB				=	gdb
-NORM_LOGS		=	${LOGS_DIR}/norm.log
+VALGRIND			=	valgrind --leak-check=full --show-leak-kinds=all -s \
+	--track-origins=yes --trace-children=yes --error-limit=no --track-fds=yes \
+	--trace-signals=no --read-var-info=yes --track-origins=yes
+VALGRIND_SUPPRESS	=	--suppressions=includes/make/readline.supp
+VALGRIND_LOGS		=	--log-file=${VGRIND_LOGFILE}
+VGRIND_LOGFILE		=	$(shell pwd)/logs/valgrind.log
+GDB					=	gdb
+NORM_LOGS			=	${LOGS_DIR}/norm.log
 
 ##	ANSI CODES
 C_BLACK			=	\033[30m

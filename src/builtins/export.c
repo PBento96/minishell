@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:44:36 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:03:30 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,27 @@ static void	process_var_with_equal(t_data *data, char *var)
 static void	process_var_no_equal(t_data *data, char *var)
 {
 	int		count;
+	char	*temp;
 
 	if (var_exists(data->env, var))
 		return ;
 	count = 0;
+	temp = var;
+	if (ft_isdigit(*temp))
+	{
+		write_error_message(var);
+		return ;
+	}
+	temp++;
+	while (*temp)
+	{
+		if ((!ft_isalnum(*temp)) && *temp != '_')
+		{
+			write_error_message(var);
+			return ;
+		}
+		temp++;
+	}
 	while (data->env[count])
 		count++;
 	add_env_variable(data, var, count);

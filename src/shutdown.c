@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:37:51 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/04/28 14:16:05 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/28 19:43:17 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	ft_free_tokens(t_data *data)
 	int	j;
 
 	i = 0;
-	while (i < data->cmd_count)
+	while (i <= data->cmd_count)
 	{
 		j = 0;
 		while (j < data->commands[i].token_count)
