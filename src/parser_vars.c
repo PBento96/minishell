@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/12 20:22:11 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 21:45:08 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,23 @@
  */
 char	*append_char(char *str, char c)
 {
-	char	tmp_str[2];
-	char	*tmp;
+	char	*result;
+	int		len;
 
-	tmp_str[0] = c;
-	tmp_str[1] = '\0';
-	tmp = ft_strjoin(str, tmp_str);
+	if (!str)
+		return (NULL);
+	len = ft_strlen(str);
+	result = malloc(len + 2);
+	if (!result)
+	{
+		free(str);
+		return (NULL);
+	}
+	ft_strlcpy(result, str, len + 1);
+	result[len] = c;
+	result[len + 1] = '\0';
 	free(str);
-	return (tmp);
+	return (result);
 }
 
 /* Function to handle alphanumeric variable expansion
@@ -98,6 +107,8 @@ char	*ft_expand_variables(char *word, t_data *data)
 	int		i;
 	int		quotes[2];
 
+	if (!word)
+		return (NULL);
 	result = ft_strdup("");
 	quotes[0] = 0;
 	quotes[1] = 0;
@@ -110,6 +121,8 @@ char	*ft_expand_variables(char *word, t_data *data)
 			result = handle_variable(word, &i, data, result);
 		else
 			result = append_char(result, word[i++]);
+		if (!result)
+			return (NULL);
 	}
 	return (result);
 }
