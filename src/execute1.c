@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/12 22:27:20 by pda-silv         ###   ########.fr       */
+/*   Updated: 2025/05/29 21:30:07 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,11 +100,11 @@ void	ft_execute_lone_builtin(t_data *data, int cmd_index, char **cmd_args)
 		close(data->commands[cmd_index].redir.out_fd);
 	}
 	data->pids[cmd_index] = -1;
+	write(1, "Executing Lone Builtin\n", 23);
+	ft_execute_builtin(data, cmd_args);
+	data->status = 0;
 	dup2(original_stdin, STDIN_FILENO);
 	dup2(original_stdout, STDOUT_FILENO);
 	close(original_stdin);
 	close(original_stdout);
-	write(1, "Executing Lone Builtin\n", 23);
-	ft_execute_builtin(data, cmd_args);
-	data->status = 0;
 }

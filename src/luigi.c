@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:31:15 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 20:48:55 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	ft_handle_output(t_data *data, t_command cmd,
 /*   Processes heredoc input when needed                                     */
 /*   Ensures proper synchronization in the pipeline                          */
 /* ************************************************************************** */
-void	ft_handle_pipes(t_data *data, int pipefd[2],
+void	ft_handle_pipes(t_data *data, int	 pipefd[2],
 	t_command command, int cmd_index)
 {
 	if (cmd_index > 0 && data->commands[cmd_index - 1].redir.delim)
