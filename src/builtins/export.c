@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pda-silv <pda-silv@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/16 14:03:30 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 22:24:33 by pda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ static void	add_env_variable(t_data *data, char *var, int count)
 	data->env = new_env;
 }
 
-static int	update_existing_var(t_data *data, char *var, char *equal_sign)
+static int	update_existing_var(t_data *data, char *var_name, char *end_ptr,
+				char *full_var)
 {
 	int		j;
 	int		var_len;
@@ -40,14 +41,14 @@ static int	update_existing_var(t_data *data, char *var, char *equal_sign)
 
 	j = 0;
 	found = 0;
-	var_len = equal_sign - var;
+	var_len = end_ptr - var_name;
 	while (data->env[j])
 	{
-		if (ft_strncmp(data->env[j], var, var_len) == 0
-			&& data->env[j][var_len] == '=')
+		if (ft_strncmp(data->env[j], var_name, var_len) == 0
+			&& (data->env[j][var_len] == '=' || data->env[j][var_len] == '\0'))
 		{
 			free(data->env[j]);
-			data->env[j] = ft_strdup(var);
+			data->env[j] = ft_strdup(full_var);
 			found = 1;
 			break ;
 		}
@@ -58,14 +59,16 @@ static int	update_existing_var(t_data *data, char *var, char *equal_sign)
 
 static void	process_var_with_equal(t_data *data, char *var)
 {
-	char	*equal_sign;
+	char	*var_copy;
 	int		j;
 	int		found;
 
-	equal_sign = ft_strchr(var, '=');
-	*equal_sign = '\0';
-	found = update_existing_var(data, var, equal_sign);
-	*equal_sign = '=';
+	var_copy = ft_strdup(var);
+	if (!var_copy)
+		return ;
+	*ft_strchr(var_copy, '=') = '\0';
+	found = update_existing_var(data, var_copy, ft_strchr(var_copy, '\0'), var);
+	free(var_copy);
 	if (!found)
 	{
 		j = 0;
