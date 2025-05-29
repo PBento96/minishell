@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/22 21:34:17 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 19:54:24 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ static t_token	ft_parse_redirection(char **ptr)
 {
 	t_token	token;
 
+	ft_bzero(&token, sizeof(t_token));
 	if (**ptr == '>')
 		ft_parse_output_redir(ptr, &token);
 	else if (**ptr == '<')

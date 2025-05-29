@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 14:37:51 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/28 19:43:17 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 21:32:22 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	ft_free_env_array(t_data *data)
 
 void	ft_shutdown(t_data **data, int retval)
 {
-	ft_printf(C_YELLOW"\nExiting Minishell...\n"RESET_COLOR);
 	if (*data)
 	{
 		clear_history();
