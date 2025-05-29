@@ -12,7 +12,7 @@ OBJ			=	${SRC:.c=.o}
 
 ##	BASIC RULES
 ${NAME}: init libft ${OBJ}
-	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} -o ${BIN_DIR}/${NAME}
+	${CC} ${CFLAGS} ${OBJ} ${INCLUDES} ${LIBRARIES} ${LIBS} -o ${BIN_DIR}/${NAME}
 
 all: ${NAME}
 

@@ -14,8 +14,9 @@ LOGS_DIR		=	./logs
 NORM_DIRS		=	${LIBFT_DIR} ${INCLUDES_DIR}/minishell.h ./src
 
 ##	LIBRARIES
-INCLUDES = -I ${INCLUDES_DIR} -lreadline
+INCLUDES = -I ${INCLUDES_DIR}
 LIBRARIES = ${LIBFT_DIR}/libft.a
+LIBS = -lreadline
 
 ##	GIT
 LIBFT_REPO = git@github.com:PBento96/libft.git
@@ -23,7 +24,7 @@ LIBFT_REPO = git@github.com:PBento96/libft.git
 ##	TESTERS
 VALGRIND			=	valgrind --leak-check=full --show-leak-kinds=all -s \
 	--track-origins=yes --trace-children=yes --error-limit=no --track-fds=yes \
-	--trace-signals=no --read-var-info=yes --track-origins=yes
+	--trace-signals=no --read-var-info=yes
 VALGRIND_SUPPRESS	=	--suppressions=includes/make/readline.supp
 VALGRIND_LOGS		=	--log-file=${VGRIND_LOGFILE}
 VGRIND_LOGFILE		=	$(shell pwd)/logs/valgrind.log

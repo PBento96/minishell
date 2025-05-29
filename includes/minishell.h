@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/23 20:33:23 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:53:03 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ typedef struct s_data
 extern int	g_signal;
 
 //	Parsing
-int		ft_tokenize_input(t_data *data);
+int		ft_tokenize_input(t_data *data, char *ptr, int count);
 char	*ft_parse_word(char **ptr, t_data *data);
 bool	ft_is_builtin(const char *command);
 char	**ft_tokens_to_args(t_command *command);
