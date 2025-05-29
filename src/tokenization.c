@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/28 21:58:15 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 19:47:45 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static void	ft_handle_pipe_token(t_data *data, int *count)
 	data->cmd_count++;
 	*count = 0;
 }
+
 static void	ft_pipe_syntax_error(t_data *data, t_token token)
 {
 	ft_printf(C_RED"syntax error near unexpected token `|'\n"
