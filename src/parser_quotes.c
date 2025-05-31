@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 19:19:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/28 15:01:07 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 21:44:48 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ int	handle_quotes(char **ptr, int *in_quotes, char *quote_type)
 char	*handle_quote(char *word, int *i, char *result, int *in_quotes)
 {
 	char	quote;
+	char	*new_result;
 
 	quote = word[*i];
 	if (quote == '\'' || quote == '\"')
@@ -133,7 +134,13 @@ char	*handle_quote(char *word, int *i, char *result, int *in_quotes)
 			else
 				in_quotes[1] = !in_quotes[1];
 		}
-		result = append_char(result, word[*i]);
+		new_result = append_char(result, word[*i]);
+		if (!new_result)
+		{
+			free(result);
+			return (NULL);
+		}
+		result = new_result;
 		(*i)++;
 	}
 	return (result);

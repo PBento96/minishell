@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:23:36 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/29 19:47:45 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 21:55:51 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int	ft_tokenize_input(t_data *data, char *ptr, int count)
 {
 	t_token	token;
 
+	if (!ft_is_quotes_balanced(ptr))
+		return (1);
 	while (*ptr)
 	{
 		token = ft_parse_token(&ptr, data);

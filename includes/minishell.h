@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:39:39 by pda-silv          #+#    #+#             */
-/*   Updated: 2025/05/28 21:53:03 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 22:31:03 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ typedef struct s_data
 	int			status;
 	int8_t		cmd_count;
 	int			prev_pipe;
+	int			original_stdin;
+	int			original_stdout;
 	int			piped;
 	int8_t		retval;
 	pid_t		*pids;

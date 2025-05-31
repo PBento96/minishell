@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 14:27:48 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/29 21:35:57 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/29 22:34:48 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ void	ft_exit(t_data *data, char **cmd_args)
 		ft_free_cmd(data, cmd_args);
 		ft_cleanup_execution(data);
 		ft_printf(C_YELLOW"\nExiting Minishell...\n"RESET_COLOR);
+		ft_safe_close(&data->original_stdin);
+		ft_safe_close(&data->original_stdout);
 		ft_shutdown(&data, (unsigned char)exit_status);
 	}
 	if (!is_numeric_arg(cmd_args[1], &exit_status))
