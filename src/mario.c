@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:30:00 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/27 12:04:48 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/31 14:28:43 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ void	ft_wait_children(t_data *data, pid_t *pids)
 		}
 		free(pids);
 	}
-	if (data->prev_pipe != -1)
-		close(data->prev_pipe);
+	if (data->prev_pipe >= 0)
+		ft_safe_close(&data->prev_pipe);
 }
 
 /* ************************************************************************** */

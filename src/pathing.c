@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 10:24:50 by joseferr          #+#    #+#             */
-/*   Updated: 2025/04/06 11:20:44 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/31 14:03:17 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,31 +52,41 @@ char	*ft_getenv(const char *name, char **env)
 	return (NULL);
 }
 
-void	ft_getpath(t_data *data, char *arg)
+void	ft_getpath(t_data *data, char *cmd)
 {
-	char	*path;
-	char	**dirs;
+	char	**path_dirs;
+	char	*path_env;
 
-	if (ft_strchr(arg, '/'))
+	if (!cmd || cmd[0] == '\0')
 	{
-		if (access(arg, F_OK) == 0)
-			data->cmd_path = ft_strdup(arg);
+		data->cmd_path = NULL;
+		return;
+	}
+	if (ft_is_builtin(cmd))
+	{
+		data->cmd_path = NULL;
+		return;
+	}
+	if (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'))
+	{
+		if (access(cmd, F_OK | X_OK) == 0)
+			data->cmd_path = ft_strdup(cmd);
 		else
 			data->cmd_path = NULL;
-		return ;
+		return;
 	}
-	path = ft_getenv("PATH", data->env);
-	if (!path)
+	path_env = ft_getenv("PATH", data->env);
+	if (!path_env)
 	{
 		data->cmd_path = NULL;
-		return ;
+		return;
 	}
-	dirs = ft_split(path, ':');
-	if (!dirs)
+	path_dirs = ft_split(path_env, ':');
+	if (!path_dirs)
 	{
 		data->cmd_path = NULL;
-		return ;
+		return;
 	}
-	data->cmd_path = ft_findcmd(dirs, arg);
-	ft_free_array((void **)dirs);
+	data->cmd_path = ft_findcmd(path_dirs, cmd);
+	ft_free_array((void **)path_dirs);
 }

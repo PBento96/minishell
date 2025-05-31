@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/29 22:35:59 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/31 14:31:50 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	ft_handle_parent(t_data *data, int pipefd[2], int cmd_index)
 	if (cmd_index < data->cmd_count)
 		close(pipefd[1]);
 	if (data->prev_pipe != -1)
-		close(data->prev_pipe);
+		ft_safe_close(&data->prev_pipe);
 	if (cmd_index < data->cmd_count)
 		data->prev_pipe = pipefd[0];
 }

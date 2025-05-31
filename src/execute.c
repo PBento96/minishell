@@ -6,7 +6,7 @@
 /*   By: joseferr <joseferr@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:11:45 by joseferr          #+#    #+#             */
-/*   Updated: 2025/05/27 11:42:42 by joseferr         ###   ########.fr       */
+/*   Updated: 2025/05/31 14:00:35 by joseferr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ static void	ft_prepare_command(t_data *data, int cmd_index, char ***cmd_args)
 {
 	*cmd_args = ft_tokens_to_args(&data->commands[cmd_index]);
 	ft_getpath(data, *cmd_args[0]);
+	printf("path: %s\n", data->cmd_path);
 }
 
 /* ************************************************************************** */
